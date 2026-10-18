@@ -7,7 +7,7 @@
   <meta name="description" content="L V Spices Daily Cleaning & Sanitation Register — FSSAI Schedule 4 GMP & GHP Compliant Records." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet" />
   <!-- SheetJS for Excel Exports -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="icon" type="image/jpeg" href="assets/lv_spices_logo.jpg" />
@@ -60,19 +60,19 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
         <div>
-          <h2 class="page-title" id="page-title">Cleaning & Sanitization Record</h2>
-          <div class="page-subtitle">Daily Hygiene Checklist • FSSAI GMP & GHP</div>
+          <h2 class="page-title" id="page-title">Cleaning &amp; Sanitation Register</h2>
+          <div class="page-subtitle">Daily Hygiene Checklist • FSSAI GMP &amp; GHP | <span class="highlight-schedule">Schedule 4</span></div>
         </div>
         <div class="date-navigator" id="date-navigator">
           <button class="date-nav-btn" id="btn-prev-day" onclick="changeDay(-1)" title="Previous Day">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <div class="date-display-pill" id="date-display" onclick="openDatePicker()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             <span id="date-display-text">Today</span>
           </div>
           <button class="date-nav-btn" id="btn-next-day" onclick="changeDay(1)" title="Next Day">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         </div>
       </div>
@@ -82,8 +82,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/><polyline points="10 9 9 9 8 9"/></svg>
           Export Excel (.xlsx)
         </button>
-        <button class="btn btn-primary btn-sm" onclick="saveRegister()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <button class="btn btn-save-cloud" onclick="saveRegister()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><polyline points="12 12 12 8"/><polyline points="10 10 12 8 14 10"/></svg>
           Save to Cloud
         </button>
       </div>
@@ -124,27 +124,50 @@
         </div>
       </div>
 
-      <!-- Quick Metrics Bar -->
+      <!-- Quick Metrics Bar (Exact match to reference mockup) -->
       <div class="stats-row" id="stats-row">
-        <div class="stat-card green">
-          <div class="stat-label">OK (Compliant)</div>
-          <div class="stat-value" id="stat-ok">12</div>
-          <div class="stat-sub">Passed Sanitation Standard</div>
+        <div class="stat-card card-green">
+          <div class="stat-card-icon icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <div class="stat-label">OK (COMPLIANT)</div>
+            <div class="stat-value" id="stat-ok">12</div>
+            <div class="stat-sub">Passed Sanitation Standard</div>
+          </div>
         </div>
-        <div class="stat-card red">
-          <div class="stat-label">Not OK / Issues</div>
-          <div class="stat-value" id="stat-issues">0</div>
-          <div class="stat-sub">Corrective Action Required</div>
+
+        <div class="stat-card card-red">
+          <div class="stat-card-icon icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <div class="stat-label">NOT OK / ISSUES</div>
+            <div class="stat-value" id="stat-issues">0</div>
+            <div class="stat-sub">Corrective Action Required</div>
+          </div>
         </div>
-        <div class="stat-card amber">
-          <div class="stat-label">NA Checkpoints</div>
-          <div class="stat-value" id="stat-na">0</div>
-          <div class="stat-sub">Not Applicable Today</div>
+
+        <div class="stat-card card-amber">
+          <div class="stat-card-icon icon-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <div class="stat-label">NA CHECKPOINTS</div>
+            <div class="stat-value" id="stat-na">0</div>
+            <div class="stat-sub">Not Applicable Today</div>
+          </div>
         </div>
-        <div class="stat-card brand">
-          <div class="stat-label">Audit Score</div>
-          <div class="stat-value" id="stat-pct">100%</div>
-          <div class="stat-sub">Compliance Verified</div>
+
+        <div class="stat-card card-purple">
+          <div class="stat-card-icon icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div class="stat-card-info">
+            <div class="stat-label">AUDIT SCORE</div>
+            <div class="stat-value" id="stat-pct">100%</div>
+            <div class="stat-sub">Compliance Verified</div>
+          </div>
         </div>
       </div>
 
@@ -152,11 +175,11 @@
       <div class="checklist-card">
         <div class="card-header">
           <div class="card-header-left">
-            <div class="card-header-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="card-header-icon card-icon-calendar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
             </div>
             <div>
-              <div class="card-title">Daily Cleaning & Sanitation Register</div>
+              <div class="card-title">Daily Cleaning &amp; Sanitation Register</div>
               <div class="card-subtitle">Click on any status pill or text cell to edit manually</div>
             </div>
           </div>
