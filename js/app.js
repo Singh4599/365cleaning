@@ -334,28 +334,158 @@ window.cycleRowStatus = function(idx) {
   saveRegister(true); // Auto-sync
 };
 
+let activeEditTarget = null; // { type: 'row'|'corr', idx, field }
+
+const QUICK_SUGGESTIONS = {
+  agent: [
+    "Lizol Floor Cleaner / Disinfectant",
+    "Ethanol 70% Food Contact Sanitizer",
+    "Isopropyl Alcohol (IPA) 70%",
+    "Food Grade Neutral Detergent",
+    "Chlorine 100ppm Solution",
+    "Antibacterial Hand Soap",
+    "Sodium Hypochlorite 1% + Phenyl",
+    "Dettol Disinfectant"
+  ],
+  method: [
+    "Sweeping & Wet Mopping",
+    "Wiping & Surface Sanitization",
+    "Dry Wiping & Food-Safe Sanitizer",
+    "Precision Dry Wipe & Sanitization",
+    "Hot Detergent Wash, Rinse & Drying",
+    "Dusting & Surface Wiping",
+    "Deep Scrubbing, Disinfection & Mop"
+  ],
+  time: [
+    "08:30 AM", "08:45 AM", "09:00 AM", "09:15 AM", "09:30 AM",
+    "09:45 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM"
+  ],
+  cleanedBy: [
+    "Rajesh Sharma", "Vinod Singh", "Golu Yadav", "Vishal",
+    "Mahesh", "Pratap", "Rajkumar", "Suraj", "Suchitra", "Anil"
+  ],
+  checkedBy: [
+    "Mukesh Vora", "Rajesh Sharma (Supervisor)"
+  ]
+};
+
 window.editRowCell = function(idx, field) {
   if (!activeRecord || !activeRecord.rows[idx]) return;
-  const currentVal = activeRecord.rows[idx][field] || "";
-  const newVal = prompt(`Edit ${field}:`, currentVal);
-  if (newVal !== null && newVal.trim() !== currentVal) {
-    activeRecord.rows[idx][field] = newVal.trim();
-    markUnsaved();
-    renderCurrentDay();
-    saveRegister(true);
+  const row = activeRecord.rows[idx];
+  activeEditTarget = { type: 'row', idx, field };
+
+  const fieldLabels = {
+    area: "Area / Equipment Name",
+    method: "Cleaning Method",
+    agent: "Cleaning / Sanitizing Agent Used",
+    time: "Cleaning Time",
+    cleanedBy: "Cleaned By (Staff Sign)",
+    checkedBy: "Checked By (Supervisor Sign)"
+  };
+
+  document.getElementById('popup-edit-title').textContent = `Edit ${fieldLabels[field] || field}`;
+  document.getElementById('popup-edit-sub').textContent = `${row.area || 'Checkpoint'} (Checkpoint #${row.id || idx + 1})`;
+  document.getElementById('popup-edit-label').textContent = fieldLabels[field] || field;
+
+  const input = document.getElementById('popup-edit-input');
+  input.value = row[field] || "";
+
+  // Render quick suggestions if available
+  const suggestRow = document.getElementById('popup-suggest-row');
+  const suggestions = QUICK_SUGGESTIONS[field];
+  if (suggestions && suggestions.length > 0) {
+    suggestRow.style.display = 'flex';
+    suggestRow.innerHTML = suggestions.map(s => `
+      <button type="button" class="suggest-pill" onclick="applySuggestion('${escapeHtml(s)}')">${escapeHtml(s)}</button>
+    `).join('');
+  } else {
+    suggestRow.style.display = 'none';
+  }
+
+  document.getElementById('popup-edit-cell').style.display = 'flex';
+  setTimeout(() => { input.focus(); input.select(); }, 60);
+};
+
+window.applySuggestion = function(val) {
+  const input = document.getElementById('popup-edit-input');
+  if (input) {
+    input.value = val;
+    input.focus();
   }
 };
 
+window.savePopupEdit = function() {
+  if (!activeEditTarget || !activeRecord) return;
+  const input = document.getElementById('popup-edit-input');
+  const val = input ? input.value.trim() : "";
+
+  if (activeEditTarget.type === 'row') {
+    const { idx, field } = activeEditTarget;
+    if (activeRecord.rows[idx]) {
+      activeRecord.rows[idx][field] = val;
+    }
+  } else if (activeEditTarget.type === 'corr') {
+    const { idx, field } = activeEditTarget;
+    if (activeRecord.corrective && activeRecord.corrective[idx]) {
+      activeRecord.corrective[idx][field] = val;
+    }
+  }
+
+  closePopupEdit();
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true);
+  showToast("Detail updated successfully!");
+};
+
+window.closePopupEdit = function() {
+  document.getElementById('popup-edit-cell').style.display = 'none';
+  activeEditTarget = null;
+};
+
+// Key bindings: Enter saves, Escape closes
+document.addEventListener('keydown', (e) => {
+  const editModal = document.getElementById('popup-edit-cell');
+  if (editModal && editModal.style.display === 'flex') {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      savePopupEdit();
+    } else if (e.key === 'Escape') {
+      closePopupEdit();
+    }
+  }
+  const addAreaModal = document.getElementById('popup-add-area');
+  if (addAreaModal && addAreaModal.style.display === 'flex' && e.key === 'Escape') {
+    closeAddAreaPopup();
+  }
+  const addObsModal = document.getElementById('popup-add-obs');
+  if (addObsModal && addObsModal.style.display === 'flex' && e.key === 'Escape') {
+    closeAddObsPopup();
+  }
+});
+
 window.editCorrCell = function(idx, field) {
   if (!activeRecord || !activeRecord.corrective[idx]) return;
-  const currentVal = activeRecord.corrective[idx][field] || "";
-  const newVal = prompt(`Edit ${field}:`, currentVal);
-  if (newVal !== null && newVal.trim() !== currentVal) {
-    activeRecord.corrective[idx][field] = newVal.trim();
-    markUnsaved();
-    renderCurrentDay();
-    saveRegister(true);
-  }
+  const c = activeRecord.corrective[idx];
+  activeEditTarget = { type: 'corr', idx, field };
+
+  const fieldLabels = {
+    problem: "Problem / Deficiency Observed",
+    action: "Corrective Action Taken",
+    actionTime: "Action Completed Time",
+    verifiedBy: "Verified By (Supervisor)"
+  };
+
+  document.getElementById('popup-edit-title').textContent = `Edit Corrective Record`;
+  document.getElementById('popup-edit-sub').textContent = `Deficiency Entry #${idx + 1}`;
+  document.getElementById('popup-edit-label').textContent = fieldLabels[field] || field;
+
+  const input = document.getElementById('popup-edit-input');
+  input.value = c[field] || "";
+  document.getElementById('popup-suggest-row').style.display = 'none';
+
+  document.getElementById('popup-edit-cell').style.display = 'flex';
+  setTimeout(() => { input.focus(); input.select(); }, 60);
 };
 
 window.deleteCorrRow = function(idx) {
@@ -366,26 +496,41 @@ window.deleteCorrRow = function(idx) {
   saveRegister(true);
 };
 
+// Add Observation Modal handlers
 window.addCorrectiveRow = function() {
-  if (!activeRecord) return;
-  if (!activeRecord.corrective) activeRecord.corrective = [];
-  const problem = prompt("Enter Problem Observed:");
-  if (!problem) return;
-  const action = prompt("Enter Corrective Action Taken:", "Area sanitized, re-cleaned and cleared for production");
-  const actionTime = prompt("Enter Action Completed Time:", "11:00 AM");
+  document.getElementById('obs-problem').value = "";
+  document.getElementById('popup-add-obs').style.display = 'flex';
+  setTimeout(() => document.getElementById('obs-problem').focus(), 60);
+};
 
+window.closeAddObsPopup = function() {
+  document.getElementById('popup-add-obs').style.display = 'none';
+};
+
+window.confirmAddObs = function() {
+  const problem = document.getElementById('obs-problem').value.trim();
+  if (!problem) {
+    alert("Please enter problem observed");
+    return;
+  }
+  const action = document.getElementById('obs-action').value.trim() || "Area cleaned and sanitized";
+  const time = document.getElementById('obs-time').value.trim() || "10:15 AM";
+  const verifier = document.getElementById('obs-verifier').value.trim() || "Mukesh Vora";
+
+  if (!activeRecord.corrective) activeRecord.corrective = [];
   activeRecord.corrective.push({
     id: activeRecord.corrective.length + 1,
-    problem: problem.trim(),
-    action: (action || "").trim(),
-    actionTime: (actionTime || "11:00 AM").trim(),
-    verifiedBy: "Mukesh Vora"
+    problem: problem,
+    action: action,
+    actionTime: time,
+    verifiedBy: verifier
   });
 
+  closeAddObsPopup();
   markUnsaved();
   renderCurrentDay();
   saveRegister(true);
-  showToast("Corrective observation added!");
+  showToast("Deficiency observation logged!");
 };
 
 window.markAllStatus = function(status) {
@@ -400,30 +545,45 @@ window.markAllStatus = function(status) {
   showToast(`All checkpoints marked ${status}`);
 };
 
+// Add Custom Area Modal handlers
 window.addNewCheckpointRow = function() {
-  if (!activeRecord) return;
-  const area = prompt("Enter new Area / Equipment Name:");
-  if (!area) return;
-  const method = prompt("Enter Cleaning Method:", "Sweeping & Wet Mopping");
-  const agent = prompt("Enter Sanitizing Agent Used:", "Lizol Floor Cleaner");
-  const time = prompt("Enter Cleaning Time:", "10:30 AM");
+  document.getElementById('new-area-name').value = "";
+  document.getElementById('popup-add-area').style.display = 'flex';
+  setTimeout(() => document.getElementById('new-area-name').focus(), 60);
+};
+
+window.closeAddAreaPopup = function() {
+  document.getElementById('popup-add-area').style.display = 'none';
+};
+
+window.confirmAddArea = function() {
+  const name = document.getElementById('new-area-name').value.trim();
+  if (!name) {
+    alert("Please enter area name");
+    return;
+  }
+  const method = document.getElementById('new-area-method').value.trim() || "Sweeping & Wet Mopping";
+  const agent = document.getElementById('new-area-agent').value.trim() || "Lizol Floor Cleaner";
+  const time = document.getElementById('new-area-time').value.trim() || "10:30 AM";
+  const cleanedBy = document.getElementById('new-area-cleanedby').value.trim() || "Rajesh Sharma";
 
   const newId = activeRecord.rows.length + 1;
   activeRecord.rows.push({
     id: newId,
-    area: area.trim(),
-    method: method || "Sweeping & Wet Mopping",
-    agent: agent || "Lizol Floor Cleaner",
-    time: time || "10:30 AM",
+    area: name,
+    method: method,
+    agent: agent,
+    time: time,
     status: "OK",
-    cleanedBy: "Rajesh Sharma",
+    cleanedBy: cleanedBy,
     checkedBy: "Mukesh Vora"
   });
 
+  closeAddAreaPopup();
   markUnsaved();
   renderCurrentDay();
   saveRegister(true);
-  showToast("New area added to register!");
+  showToast("New area checkpoint added!");
 };
 
 window.markUnsaved = function() {

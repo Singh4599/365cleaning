@@ -342,6 +342,124 @@
   </div>
 </div>
 
+<!-- ── IN-APP CELL EDIT POPUP MODAL (REPLACING NATIVE PROMPT) ── -->
+<div class="modal-backdrop" id="popup-edit-cell" style="display:none;" onclick="closePopupEdit()">
+  <div class="modal-box popup-slide-down" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <div class="popup-icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <div>
+          <h3 id="popup-edit-title">Edit Detail</h3>
+          <span class="popup-sub" id="popup-edit-sub">Update checkpoint detail</span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closePopupEdit()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" id="popup-edit-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Field Value</label>
+        <input type="text" class="popup-input-field" id="popup-edit-input" autocomplete="off" />
+        <div class="quick-suggest-row" id="popup-suggest-row" style="display:none;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closePopupEdit()">Cancel</button>
+      <button class="btn btn-primary" id="popup-edit-save-btn" onclick="savePopupEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── IN-APP ADD CUSTOM AREA MODAL ── -->
+<div class="modal-backdrop" id="popup-add-area" style="display:none;" onclick="closeAddAreaPopup()">
+  <div class="modal-box popup-slide-down" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <div class="popup-icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <div>
+          <h3>Add Custom Cleaning Area</h3>
+          <span class="popup-sub">Append a new checkpoint to today's register</span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeAddAreaPopup()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="popup-form-grid">
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Area / Equipment Name *</label>
+          <input type="text" class="popup-input-field" id="new-area-name" placeholder="e.g. Sifter & Vibro Screen" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Cleaning Method</label>
+          <input type="text" class="popup-input-field" id="new-area-method" value="Sweeping & Wet Mopping" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Sanitizing Agent</label>
+          <input type="text" class="popup-input-field" id="new-area-agent" value="Lizol Floor Cleaner" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Cleaning Time</label>
+          <input type="text" class="popup-input-field" id="new-area-time" value="10:30 AM" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Cleaned By (Staff)</label>
+          <input type="text" class="popup-input-field" id="new-area-cleanedby" value="Rajesh Sharma" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAddAreaPopup()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddArea()">Add Area to Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── IN-APP ADD DEFICIENCY & OBSERVATION MODAL ── -->
+<div class="modal-backdrop" id="popup-add-obs" style="display:none;" onclick="closeAddObsPopup()">
+  <div class="modal-box popup-slide-down" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <div class="popup-icon-badge warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div>
+          <h3>Log Corrective Action</h3>
+          <span class="popup-sub">FSSAI Schedule 4 Non-Conformance Record</span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeAddObsPopup()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="popup-form-grid">
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Problem Observed *</label>
+          <input type="text" class="popup-input-field" id="obs-problem" placeholder="e.g. Spice powder residue noted along blending chute" />
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Corrective Action Taken *</label>
+          <input type="text" class="popup-input-field" id="obs-action" value="Area scrubbed with approved sanitizer, re-inspected and cleared" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Action Completed Time</label>
+          <input type="text" class="popup-input-field" id="obs-time" value="10:15 AM" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="font-weight:700; color:#334155; margin-bottom:6px; display:block;">Verified By</label>
+          <input type="text" class="popup-input-field" id="obs-verifier" value="Mukesh Vora" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAddObsPopup()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddObs()">Save Observation</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- Toast Container -->
 <div class="toast-container" id="toast-container"></div>
 
