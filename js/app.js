@@ -1,431 +1,796 @@
-// app.js — LV Spices Daily Cleaning & Sanitation Register
-// Dukan Stock style UI — Auto-fill + realistic randomization
+// app.js — L V Spices Cleaning & Sanitization Register
+// FSSAI Schedule 4 GMP & GHP compliant with Firebase Firestore Cloud Sync
+
+import { saveRecordToCloud, loadRecordFromCloud, loadAllRecordsFromCloud, updateCloudBadge } from './firebase-config.js';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// CHECKPOINT DEFINITIONS (18 items)
+// CHECKPOINTS (12 items matching exact client PDF format)
 // ──────────────────────────────────────────────────────────────────────────────
-const CHECKPOINTS = [
-  { id: 1,  name: "Shop Floor Cleaning",                    defaultTime: "8:45 AM & 6:15 PM", agent: "Lizol Floor Cleaner — Wet Mopping",           staff: "Pratap" },
-  { id: 2,  name: "Warehouse Floor Cleaning",               defaultTime: "8:45 AM & 6:15 PM", agent: "Lizol Floor Cleaner — Wet Mopping",           staff: "Mahesh" },
-  { id: 3,  name: "Manufacturing Area Cleaning",            defaultTime: "8:45 AM & 6:15 PM", agent: "Lizol Floor Cleaner — Wet Mopping",           staff: "Pratap" },
-  { id: 4,  name: "Repacking Area Cleaning",               defaultTime: "8:45 AM & 6:15 PM", agent: "Lizol Floor Cleaner — Wet Mopping",           staff: "Mahesh" },
-  { id: 5,  name: "Blending Table Cleaning",               defaultTime: "8:45 AM & 6:15 PM", agent: "Vim Dishwash Liquid — Detergent Wash & Dry",  staff: "Pratap" },
-  { id: 6,  name: "Weighing Machine Cleaning",             defaultTime: "8:45 AM & 6:15 PM", agent: "Dry Cloth Wipe",                              staff: "Mahesh" },
-  { id: 7,  name: "Scoops, Trays & Utensils Cleaning",    defaultTime: "6:00 PM",           agent: "Vim Dishwash Liquid — Detergent Wash, Rinse & Complete Drying", staff: "Pratap" },
-  { id: 8,  name: "Storage Racks & Pallets Cleaning",     defaultTime: "8:45 AM",           agent: "Dry Cloth Wipe & Dusting",                   staff: "Mahesh" },
-  { id: 9,  name: "Packing Machine Cleaning",             defaultTime: "8:45 AM & 6:15 PM", agent: "Dry Brush Cleaning — No Liquid",              staff: "Pratap" },
-  { id: 10, name: "Dust & Spillage Removal",              defaultTime: "8:45 AM & 6:15 PM", agent: "Broom & Wet Mop",                             staff: "Mahesh" },
-  { id: 11, name: "Waste Bins Cleaning & Waste Disposal", defaultTime: "6:15 PM",           agent: "Dettol Disinfectant",                         staff: "Pratap" },
-  { id: 12, name: "Handwashing Facilities & Soap Check",  defaultTime: "8:45 AM",           agent: "Dettol Handwash Refill",                      staff: "Mahesh" },
-  { id: 13, name: "Toilet & Washroom Cleaning",           defaultTime: "8:45 AM & 6:15 PM", agent: "Harpic Toilet Cleaner + Phenyl",              staff: "Pratap" },
-  { id: 14, name: "Pest Activity / Rodent Check",         defaultTime: "8:45 AM",           agent: "Visual Inspection",                          staff: "Rajesh Sharma" },
-  { id: 15, name: "Staff Hand Hygiene & Clean Clothing",  defaultTime: "9:00 AM",           agent: "Inspection",                                 staff: "Rajesh Sharma" },
-  { id: 16, name: "Hair Cover / Protective Clothing Check", defaultTime: "9:00 AM",          agent: "Visual Check",                               staff: "Rajesh Sharma" },
-  { id: 17, name: "Doors, Windows & Insect Screens Check", defaultTime: "8:45 AM",          agent: "Visual Check",                               staff: "Mahesh" },
-  { id: 18, name: "Cleaning Chemicals Properly Stored",   defaultTime: "6:15 PM",           agent: "Physical Verification",                      staff: "Rajesh Sharma" },
+export const OFFICIAL_CHECKPOINTS = [
+  { id: 1,  area: "Shop Floor",                  method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner / Disinfectant", defaultTime: "08:30 AM", cleanedBy: "Rajesh Sharma", checkedBy: "Mukesh Vora" },
+  { id: 2,  area: "Warehouse Floor",             method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner",                defaultTime: "08:45 AM", cleanedBy: "Vinod Singh",   checkedBy: "Mukesh Vora" },
+  { id: 3,  area: "Blending Table",              method: "Wiping & Surface Sanitization",       agent: "Ethanol 70% Food Contact Sanitizer", defaultTime: "09:00 AM", cleanedBy: "Golu Yadav",    checkedBy: "Mukesh Vora" },
+  { id: 4,  area: "Packing Table",               method: "Dry Wiping & Food-Safe Sanitizer",    agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:15 AM", cleanedBy: "Vishal",        checkedBy: "Mukesh Vora" },
+  { id: 5,  area: "Weighing Scale",              method: "Precision Dry Wipe & Sanitization",   agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:30 AM", cleanedBy: "Mahesh",        checkedBy: "Mukesh Vora" },
+  { id: 6,  area: "Scoops & Utensils",           method: "Hot Detergent Wash, Rinse & Drying",  agent: "Food Grade Neutral Detergent",       defaultTime: "09:45 AM", cleanedBy: "Pratap",        checkedBy: "Mukesh Vora" },
+  { id: 7,  area: "Storage Racks",               method: "Dusting & Surface Wiping",            agent: "Neutral Sanitizer Solution",         defaultTime: "10:00 AM", cleanedBy: "Rajkumar",      checkedBy: "Mukesh Vora" },
+  { id: 8,  area: "Raw Material Handling Area",  method: "Sweeping & Floor Scrubbing",          agent: "Floor Disinfectant Solution",        defaultTime: "10:30 AM", cleanedBy: "Suraj",         checkedBy: "Mukesh Vora" },
+  { id: 9,  area: "Finished Goods Storage Area", method: "Wet Mopping & Dust Removal",          agent: "Floor Disinfectant Solution",        defaultTime: "11:00 AM", cleanedBy: "Anil",          checkedBy: "Mukesh Vora" },
+  { id: 10, area: "Waste Bins",                  method: "Emptying, Detergent Wash & Disinfect",agent: "Chlorine 100ppm Solution",           defaultTime: "11:30 AM", cleanedBy: "Suchitra",      checkedBy: "Mukesh Vora" },
+  { id: 11, area: "Handwashing Area",            method: "Scrubbing, Sanitizing & Soap Refill", agent: "Antibacterial Soap & Water",        defaultTime: "12:00 PM", cleanedBy: "Rajesh Sharma", checkedBy: "Mukesh Vora" },
+  { id: 12, area: "Toilet / Washroom",           method: "Deep Scrubbing, Disinfection & Mop",  agent: "Sodium Hypochlorite 1% + Phenyl",    defaultTime: "12:30 PM", cleanedBy: "Golu Yadav",    checkedBy: "Mukesh Vora" }
 ];
 
-// Realistic issue library for randomizer
-const ISSUE_SCENARIOS = [
-  { checkpoint: 1,  problem: "Spice powder residue found near packaging area", action: "Area swept and mopped again with Lizol Floor Cleaner, wet mopping done" },
-  { checkpoint: 2,  problem: "Dust accumulation observed near pallets",        action: "Dry mopping followed by wet mopping with Lizol done, area cleared" },
-  { checkpoint: 3,  problem: "Turmeric stain found on manufacturing floor",    action: "Stain treated with Lizol, floor scrubbed and rewashed" },
-  { checkpoint: 5,  problem: "Blending table had residual masala traces",      action: "Table re-washed with Vim Dishwash Liquid and completely dried" },
-  { checkpoint: 7,  problem: "One scoop found inadequately dried",             action: "Scoop re-washed with Vim and dried completely before use" },
-  { checkpoint: 10, problem: "Minor chilli powder spillage near machine",      action: "Area swept, wet mopped with Lizol, inspected and cleared" },
-  { checkpoint: 13, problem: "Washroom floor found damp after cleaning",       action: "Washroom re-cleaned with Harpic and phenyl, floor dried with mop" },
-  { checkpoint: 14, problem: "Small insect activity observed near window",     action: "Area cleaned, window sealed, pest control notified" },
+// Realistic Corrective Actions Library for occasional non-conformities
+const REALISTIC_OBSERVATIONS = [
+  { checkpointId: 4, problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "09:35 AM", verifiedBy: "Mukesh Vora" },
+  { checkpointId: 10, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:45 AM", verifiedBy: "Mukesh Vora" },
+  { checkpointId: 3,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:15 AM", verifiedBy: "Mukesh Vora" },
+  { checkpointId: 11, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "12:10 PM", verifiedBy: "Mukesh Vora" }
 ];
 
 // ──────────────────────────────────────────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────────────────────────────────────────
-let currentDate = getTodayStr();
-let registerData = {}; // { date: { rows: [...], savedAt: ... } }
+let currentDate = getTodayStr(); // YYYY-MM-DD
+let activeRecord = null;
+let allRecordsCache = {};
 let currentView = 'today';
+let hasUnsavedChanges = false;
 
 // ──────────────────────────────────────────────────────────────────────────────
-// UTILS
+// UTILITIES
 // ──────────────────────────────────────────────────────────────────────────────
 function getTodayStr() {
-  return new Date().toISOString().split('T')[0];
-}
-function formatDate(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-}
-function formatDateShort(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-function getDayOfWeek(dateStr) {
-  return new Date(dateStr + 'T00:00:00').getDay(); // 0=Sun, 1=Mon...
-}
-function getWeekNumber(dateStr) {
-  const d = new Date(dateStr + 'T00:00:00');
-  const start = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil((((d - start) / 86400000) + start.getDay() + 1) / 7);
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// AUTO-FILL LOGIC
-// ──────────────────────────────────────────────────────────────────────────────
-function shouldHaveIssue(dateStr) {
-  // Pick 1-2 issues per week, deterministically based on week number + year
-  const d = new Date(dateStr + 'T00:00:00');
-  const weekNum = getWeekNumber(dateStr);
+  const d = new Date();
   const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateDisplay(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  return date.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function getMonthName(monthNum) {
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  return months[monthNum - 1] || "";
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// OCTOBER 2026 PRE-POPULATION
+// ──────────────────────────────────────────────────────────────────────────────
+function pregenerateOctober2026Data() {
+  // Generates data for October 1 to 18, 2026
+  for (let day = 1; day <= 18; day++) {
+    const dayStr = String(day).padStart(2, '0');
+    const dateKey = `2026-10-${dayStr}`;
+    
+    if (!allRecordsCache[dateKey]) {
+      const isIssueDay = (day === 5 || day === 12); // Mon Oct 5 and Mon Oct 12 realistic audits
+      
+      const rows = OFFICIAL_CHECKPOINTS.map((cp) => {
+        let status = "OK";
+        if (isIssueDay && day === 5 && cp.id === 4) status = "Not OK";
+        if (isIssueDay && day === 12 && cp.id === 10) status = "Not OK";
+        
+        return {
+          id: cp.id,
+          area: cp.area,
+          method: cp.method,
+          agent: cp.agent,
+          time: cp.defaultTime,
+          status: status,
+          cleanedBy: cp.cleanedBy,
+          checkedBy: cp.checkedBy
+        };
+      });
+
+      const corrective = [];
+      if (day === 5) {
+        corrective.push({
+          id: 1,
+          problem: REALISTIC_OBSERVATIONS[0].problem,
+          action: REALISTIC_OBSERVATIONS[0].action,
+          actionTime: REALISTIC_OBSERVATIONS[0].actionTime,
+          verifiedBy: REALISTIC_OBSERVATIONS[0].verifiedBy
+        });
+      } else if (day === 12) {
+        corrective.push({
+          id: 1,
+          problem: REALISTIC_OBSERVATIONS[1].problem,
+          action: REALISTIC_OBSERVATIONS[1].action,
+          actionTime: REALISTIC_OBSERVATIONS[1].actionTime,
+          verifiedBy: REALISTIC_OBSERVATIONS[1].verifiedBy
+        });
+      }
+
+      const record = {
+        date: dateKey,
+        month: "October",
+        year: 2026,
+        shift: "General Shift",
+        rows: rows,
+        corrective: corrective,
+        performedBy: "Rajesh Sharma / Team",
+        supervisor: "Mukesh Vora",
+        savedAt: Date.now()
+      };
+
+      allRecordsCache[dateKey] = record;
+      localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(record));
+      
+      // Async write to cloud
+      saveRecordToCloud(dateKey, record).catch(() => {});
+    }
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// RECORD GENERATOR FOR ANY DATE
+// ──────────────────────────────────────────────────────────────────────────────
+function createDefaultRecord(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const monthName = getMonthName(parseInt(m));
+
+  const rows = OFFICIAL_CHECKPOINTS.map(cp => ({
+    id: cp.id,
+    area: cp.area,
+    method: cp.method,
+    agent: cp.agent,
+    time: cp.defaultTime,
+    status: "OK",
+    cleanedBy: cp.cleanedBy,
+    checkedBy: cp.checkedBy
+  }));
+
+  return {
+    date: dateStr,
+    month: monthName,
+    year: parseInt(y),
+    shift: "General Shift",
+    rows: rows,
+    corrective: [],
+    performedBy: "Rajesh Sharma / Team",
+    supervisor: "Mukesh Vora",
+    savedAt: Date.now()
+  };
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// LOAD & RENDER RECORD
+// ──────────────────────────────────────────────────────────────────────────────
+export async function loadDayRecord(dateStr) {
+  currentDate = dateStr;
   
-  // Only on specific days (Monday or Wednesday based on week parity)
-  const day = getDayOfWeek(dateStr);
-  const issueDay = (weekNum % 2 === 0) ? 1 : 3; // Mon or Wed alternate weeks
-  
-  return day === issueDay;
+  // 1. Check in-memory cache
+  if (allRecordsCache[dateStr]) {
+    activeRecord = allRecordsCache[dateStr];
+  } else {
+    // 2. Check localStorage
+    const local = localStorage.getItem(`lv_cleaning_${dateStr}`);
+    if (local) {
+      try {
+        activeRecord = JSON.parse(local);
+        allRecordsCache[dateStr] = activeRecord;
+      } catch (e) {}
+    }
+  }
+
+  // 3. Check Cloud Firestore if not found
+  if (!activeRecord) {
+    const cloudRecord = await loadRecordFromCloud(dateStr);
+    if (cloudRecord) {
+      activeRecord = cloudRecord;
+      allRecordsCache[dateStr] = activeRecord;
+      localStorage.setItem(`lv_cleaning_${dateStr}`, JSON.stringify(activeRecord));
+    }
+  }
+
+  // 4. Default compliant record if brand new day
+  if (!activeRecord) {
+    activeRecord = createDefaultRecord(dateStr);
+    allRecordsCache[dateStr] = activeRecord;
+    localStorage.setItem(`lv_cleaning_${dateStr}`, JSON.stringify(activeRecord));
+    saveRecordToCloud(dateStr, activeRecord).catch(() => {});
+  }
+
+  renderCurrentDay();
 }
 
-function getIssueForDate(dateStr) {
-  const weekNum = getWeekNumber(dateStr);
-  const year = new Date(dateStr + 'T00:00:00').getFullYear();
-  // Pick scenario deterministically
-  const idx = (weekNum + year) % ISSUE_SCENARIOS.length;
-  return ISSUE_SCENARIOS[idx];
-}
+function renderCurrentDay() {
+  if (!activeRecord) return;
 
-function getAlternatingStaff(dateStr) {
-  // Alternate cleaned-by between Pratap and Mahesh per day
-  const d = new Date(dateStr + 'T00:00:00');
-  const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
-  return dayOfYear % 2 === 0 ? 'Pratap' : 'Mahesh';
-}
+  const [y, m, d] = activeRecord.date.split('-');
+  const monthName = getMonthName(parseInt(m));
 
-function buildDefaultRows(dateStr) {
-  const hasIssue = shouldHaveIssue(dateStr);
-  const issueScenario = hasIssue ? getIssueForDate(dateStr) : null;
-  const mainStaff = getAlternatingStaff(dateStr);
+  // Update header text
+  const dateDisplay = document.getElementById('date-display-text');
+  if (dateDisplay) {
+    dateDisplay.textContent = formatDateDisplay(activeRecord.date);
+  }
+  document.getElementById('header-date').textContent = `${d}/${m}/${y}`;
+  document.getElementById('header-month').textContent = monthName;
+  document.getElementById('header-year').textContent = y;
+  document.getElementById('header-shift').textContent = activeRecord.shift || "General Shift";
 
-  return CHECKPOINTS.map(cp => {
-    const isIssueRow = hasIssue && issueScenario && cp.id === issueScenario.checkpoint;
-    return {
-      id: cp.id,
-      name: cp.name,
-      status: isIssueRow ? 'FAIL' : 'OK',
-      time: cp.defaultTime,
-      staff: cp.staff.includes('Rajesh') ? cp.staff : mainStaff,
-      agent: cp.agent,
-      problem: isIssueRow ? issueScenario.problem : '',
-      action: isIssueRow ? issueScenario.action : '',
-      actionTime: isIssueRow ? '6:30 PM' : '',
-      verifiedBy: isIssueRow ? 'Rajesh Sharma' : '',
-    };
-  });
-}
+  document.getElementById('sign-performed-by').value = activeRecord.performedBy || "Rajesh Sharma / Team";
+  document.getElementById('sign-supervisor').value = activeRecord.supervisor || "Mukesh Vora";
 
-// ──────────────────────────────────────────────────────────────────────────────
-// LOCAL STORAGE (fallback when Firebase not configured)
-// ──────────────────────────────────────────────────────────────────────────────
-const LS_KEY = 'lv_cleaning_register';
-
-function loadFromLS(dateStr) {
-  try {
-    const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-    return all[dateStr] || null;
-  } catch { return null; }
-}
-
-function saveToLS(dateStr, rows) {
-  try {
-    const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-    all[dateStr] = { rows, savedAt: new Date().toISOString() };
-    localStorage.setItem(LS_KEY, JSON.stringify(all));
-  } catch(e) { console.error(e); }
-}
-
-function getAllDatesFromLS() {
-  try {
-    const all = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-    return Object.keys(all).sort().reverse();
-  } catch { return []; }
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// RENDER
-// ──────────────────────────────────────────────────────────────────────────────
-function getRowsForDate(dateStr) {
-  const saved = loadFromLS(dateStr);
-  if (saved) return saved.rows;
-  // Auto-generate
-  const rows = buildDefaultRows(dateStr);
-  return rows;
-}
-
-function renderRegister(dateStr) {
-  const rows = getRowsForDate(dateStr);
-  registerData[dateStr] = rows;
-
-  // Header date
-  document.getElementById('header-date').textContent = formatDate(dateStr);
-  document.getElementById('date-display-text').textContent = 
-    dateStr === getTodayStr() ? `Today — ${formatDateShort(dateStr)}` : formatDateShort(dateStr);
-
-  // Render checklist rows
+  // Render Table 1: Checkpoints
   const tbody = document.getElementById('checklist-body');
   tbody.innerHTML = '';
-  rows.forEach((row, i) => {
+
+  let okCount = 0;
+  let issuesCount = 0;
+  let naCount = 0;
+
+  activeRecord.rows.forEach((row, idx) => {
+    if (row.status === 'OK') okCount++;
+    else if (row.status === 'Not OK') issuesCount++;
+    else if (row.status === 'NA') naCount++;
+
     const tr = document.createElement('tr');
-    if (row.status === 'FAIL') tr.classList.add('row-issue');
+    tr.className = row.status === 'Not OK' ? 'row-issue' : '';
+
     tr.innerHTML = `
-      <td><div class="row-number">${row.id}</div></td>
-      <td>
-        <div class="checkpoint-name">${row.name}</div>
-        <div class="checkpoint-desc">${row.agent}</div>
+      <td class="text-center font-bold text-muted">${row.id || idx + 1}</td>
+      <td class="editable-cell" onclick="editRowCell(${idx}, 'area')"><strong>${escapeHtml(row.area)}</strong></td>
+      <td class="editable-cell text-sm text-secondary" onclick="editRowCell(${idx}, 'method')">${escapeHtml(row.method)}</td>
+      <td class="editable-cell text-sm text-secondary" onclick="editRowCell(${idx}, 'agent')">${escapeHtml(row.agent)}</td>
+      <td class="text-center editable-cell text-sm" onclick="editRowCell(${idx}, 'time')">${escapeHtml(row.time)}</td>
+      <td class="text-center">
+        <button class="status-pill status-${row.status.toLowerCase().replace(/\s+/g, '-')}" onclick="cycleRowStatus(${idx})" title="Click to cycle status (OK / Not OK / NA)">
+          ${getStatusBadgeHtml(row.status)}
+        </button>
       </td>
-      <td class="center">
-        <div class="status-toggle">
-          <button class="status-btn ${row.status === 'OK' ? 'active-ok' : ''}" onclick="setStatus(${i}, 'OK')">✓</button>
-          <button class="status-btn ${row.status === 'FAIL' ? 'active-fail' : ''}" onclick="setStatus(${i}, 'FAIL')">✗</button>
-          <button class="status-btn ${row.status === 'NA' ? 'active-na' : ''}" onclick="setStatus(${i}, 'NA')">NA</button>
-        </div>
-      </td>
-      <td><input class="table-input" value="${row.time}" onchange="updateField(${i}, 'time', this.value)" /></td>
-      <td><input class="table-input" value="${row.staff}" onchange="updateField(${i}, 'staff', this.value)" /></td>
+      <td class="editable-cell text-sm" onclick="editRowCell(${idx}, 'cleanedBy')">${escapeHtml(row.cleanedBy)}</td>
+      <td class="editable-cell text-sm font-semibold" onclick="editRowCell(${idx}, 'checkedBy')">${escapeHtml(row.checkedBy)}</td>
     `;
     tbody.appendChild(tr);
   });
 
-  updateCorrectiveSection(dateStr, rows);
-  updateStats(rows);
-}
+  // Render Table 2: Corrective Actions
+  const corrBody = document.getElementById('corrective-body');
+  corrBody.innerHTML = '';
 
-function updateStats(rows) {
-  const ok = rows.filter(r => r.status === 'OK').length;
-  const fail = rows.filter(r => r.status === 'FAIL').length;
-  const na = rows.filter(r => r.status === 'NA').length;
-  const total = rows.length;
-  const pct = Math.round(((ok + na) / total) * 100);
-
-  document.getElementById('stat-ok').textContent = ok;
-  document.getElementById('stat-issues').textContent = fail;
-  document.getElementById('stat-na').textContent = na;
-  document.getElementById('stat-pct').textContent = pct + '%';
-
-  const badge = document.getElementById('checklist-status-badge');
-  if (fail > 0) {
-    badge.className = 'badge badge-red';
-    badge.textContent = `${fail} Issue${fail > 1 ? 's' : ''}`;
+  if (activeRecord.corrective && activeRecord.corrective.length > 0) {
+    activeRecord.corrective.forEach((c, cIdx) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="text-center font-bold text-muted">${cIdx + 1}</td>
+        <td class="editable-cell font-medium" onclick="editCorrCell(${cIdx}, 'problem')">${escapeHtml(c.problem || "—")}</td>
+        <td class="editable-cell text-sm" onclick="editCorrCell(${cIdx}, 'action')">${escapeHtml(c.action || "—")}</td>
+        <td class="text-center editable-cell text-sm" onclick="editCorrCell(${cIdx}, 'actionTime')">${escapeHtml(c.actionTime || "—")}</td>
+        <td class="editable-cell text-sm font-semibold" onclick="editCorrCell(${cIdx}, 'verifiedBy')">${escapeHtml(c.verifiedBy || "Mukesh Vora")}</td>
+        <td class="text-center">
+          <button class="delete-btn-xs" onclick="deleteCorrRow(${cIdx})" title="Remove Observation">✕</button>
+        </td>
+      `;
+      corrBody.appendChild(tr);
+    });
   } else {
-    badge.className = 'badge badge-green';
-    badge.textContent = 'All Clear';
-  }
-}
-
-function updateCorrectiveSection(dateStr, rows) {
-  const issues = rows.filter(r => r.status === 'FAIL');
-  const section = document.getElementById('corrective-section');
-  const badge = document.getElementById('issues-count-badge');
-  const tbody = document.getElementById('corrective-body');
-
-  if (issues.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-
-  section.style.display = '';
-  badge.textContent = `${issues.length} Issue${issues.length > 1 ? 's' : ''}`;
-  tbody.innerHTML = '';
-
-  let srNum = 1;
-  issues.forEach(row => {
-    const origIdx = rows.indexOf(row);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${srNum++}</td>
-      <td><strong>${row.name}</strong></td>
-      <td><input class="table-input" value="${row.problem}" placeholder="Describe problem..." onchange="updateField(${origIdx}, 'problem', this.value)" style="min-width:180px" /></td>
-      <td><input class="table-input" value="${row.action}" placeholder="Action taken..." onchange="updateField(${origIdx}, 'action', this.value)" style="min-width:180px" /></td>
-      <td><input class="table-input" value="${row.actionTime}" placeholder="Time..." onchange="updateField(${origIdx}, 'actionTime', this.value)" /></td>
-      <td><input class="table-input" value="${row.verifiedBy || 'Rajesh Sharma'}" onchange="updateField(${origIdx}, 'verifiedBy', this.value)" /></td>
+    corrBody.innerHTML = `
+      <tr>
+        <td colspan="6" class="text-center text-muted" style="padding:18px;">
+          ✓ No deficiencies observed for this date. All areas conform to FSSAI Schedule 4 hygiene standards.
+        </td>
+      </tr>
     `;
-    tbody.appendChild(tr);
-  });
+  }
+
+  // Update Stats Counters
+  document.getElementById('stat-ok').textContent = okCount;
+  document.getElementById('stat-issues').textContent = issuesCount;
+  document.getElementById('stat-na').textContent = naCount;
+
+  const total = activeRecord.rows.length;
+  const pct = total > 0 ? Math.round(((okCount + naCount) / total) * 100) : 100;
+  document.getElementById('stat-pct').textContent = `${pct}%`;
+
+  hasUnsavedChanges = false;
+}
+
+function getStatusBadgeHtml(status) {
+  if (status === 'OK') return `<span class="icon-ok">✓</span> OK`;
+  if (status === 'Not OK') return `<span class="icon-not-ok">✗</span> Not OK`;
+  return `<span>—</span> NA`;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// ACTIONS
+// INTERACTIVE CELL EDITING & STATUS TOGGLING
 // ──────────────────────────────────────────────────────────────────────────────
-window.setStatus = function(rowIdx, status) {
-  const rows = registerData[currentDate];
-  if (!rows) return;
-  rows[rowIdx].status = status;
-  renderRegister(currentDate);
-};
+window.cycleRowStatus = function(idx) {
+  if (!activeRecord || !activeRecord.rows[idx]) return;
+  const curr = activeRecord.rows[idx].status;
+  let next = "OK";
+  if (curr === "OK") next = "Not OK";
+  else if (curr === "Not OK") next = "NA";
+  else next = "OK";
 
-window.updateField = function(rowIdx, field, value) {
-  const rows = registerData[currentDate];
-  if (!rows) return;
-  rows[rowIdx][field] = value;
-  updateStats(rows);
-};
+  activeRecord.rows[idx].status = next;
 
-window.saveRegister = function() {
-  const rows = registerData[currentDate];
-  if (!rows) return;
-  saveToLS(currentDate, rows);
-  showToast('Register saved successfully!', 'success');
-};
-
-window.changeDay = function(delta) {
-  const d = new Date(currentDate + 'T00:00:00');
-  d.setDate(d.getDate() + delta);
-  const newDate = d.toISOString().split('T')[0];
-  const today = new Date().toISOString().split('T')[0];
-  if (newDate > today) {
-    showToast("Can't navigate to future dates", 'error');
-    return;
+  // If marked Not OK, ensure a corrective record row exists
+  if (next === "Not OK") {
+    if (!activeRecord.corrective) activeRecord.corrective = [];
+    const areaName = activeRecord.rows[idx].area;
+    const exists = activeRecord.corrective.some(c => c.problem.includes(areaName));
+    if (!exists) {
+      activeRecord.corrective.push({
+        id: activeRecord.corrective.length + 1,
+        problem: `Dust or spillage noted during inspection at ${areaName}`,
+        action: `Area re-cleaned using approved cleaning agent, sanitized and verified`,
+        actionTime: activeRecord.rows[idx].time || "10:00 AM",
+        verifiedBy: "Mukesh Vora"
+      });
+    }
   }
-  currentDate = newDate;
-  renderRegister(currentDate);
+
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true); // Auto-sync
+};
+
+window.editRowCell = function(idx, field) {
+  if (!activeRecord || !activeRecord.rows[idx]) return;
+  const currentVal = activeRecord.rows[idx][field] || "";
+  const newVal = prompt(`Edit ${field}:`, currentVal);
+  if (newVal !== null && newVal.trim() !== currentVal) {
+    activeRecord.rows[idx][field] = newVal.trim();
+    markUnsaved();
+    renderCurrentDay();
+    saveRegister(true);
+  }
+};
+
+window.editCorrCell = function(idx, field) {
+  if (!activeRecord || !activeRecord.corrective[idx]) return;
+  const currentVal = activeRecord.corrective[idx][field] || "";
+  const newVal = prompt(`Edit ${field}:`, currentVal);
+  if (newVal !== null && newVal.trim() !== currentVal) {
+    activeRecord.corrective[idx][field] = newVal.trim();
+    markUnsaved();
+    renderCurrentDay();
+    saveRegister(true);
+  }
+};
+
+window.deleteCorrRow = function(idx) {
+  if (!activeRecord || !activeRecord.corrective) return;
+  activeRecord.corrective.splice(idx, 1);
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true);
+};
+
+window.addCorrectiveRow = function() {
+  if (!activeRecord) return;
+  if (!activeRecord.corrective) activeRecord.corrective = [];
+  const problem = prompt("Enter Problem Observed:");
+  if (!problem) return;
+  const action = prompt("Enter Corrective Action Taken:", "Area sanitized, re-cleaned and cleared for production");
+  const actionTime = prompt("Enter Action Completed Time:", "11:00 AM");
+
+  activeRecord.corrective.push({
+    id: activeRecord.corrective.length + 1,
+    problem: problem.trim(),
+    action: (action || "").trim(),
+    actionTime: (actionTime || "11:00 AM").trim(),
+    verifiedBy: "Mukesh Vora"
+  });
+
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true);
+  showToast("Corrective observation added!");
+};
+
+window.markAllStatus = function(status) {
+  if (!activeRecord) return;
+  activeRecord.rows.forEach(r => r.status = status);
+  if (status === 'OK') {
+    activeRecord.corrective = [];
+  }
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true);
+  showToast(`All checkpoints marked ${status}`);
+};
+
+window.addNewCheckpointRow = function() {
+  if (!activeRecord) return;
+  const area = prompt("Enter new Area / Equipment Name:");
+  if (!area) return;
+  const method = prompt("Enter Cleaning Method:", "Sweeping & Wet Mopping");
+  const agent = prompt("Enter Sanitizing Agent Used:", "Lizol Floor Cleaner");
+  const time = prompt("Enter Cleaning Time:", "10:30 AM");
+
+  const newId = activeRecord.rows.length + 1;
+  activeRecord.rows.push({
+    id: newId,
+    area: area.trim(),
+    method: method || "Sweeping & Wet Mopping",
+    agent: agent || "Lizol Floor Cleaner",
+    time: time || "10:30 AM",
+    status: "OK",
+    cleanedBy: "Rajesh Sharma",
+    checkedBy: "Mukesh Vora"
+  });
+
+  markUnsaved();
+  renderCurrentDay();
+  saveRegister(true);
+  showToast("New area added to register!");
+};
+
+window.markUnsaved = function() {
+  hasUnsavedChanges = true;
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// SAVE TO CLOUD & LOCALSTORAGE
+// ──────────────────────────────────────────────────────────────────────────────
+window.saveRegister = async function(isSilent = false) {
+  if (!activeRecord) return;
+
+  activeRecord.performedBy = document.getElementById('sign-performed-by').value || "Rajesh Sharma / Team";
+  activeRecord.supervisor = document.getElementById('sign-supervisor').value || "Mukesh Vora";
+  activeRecord.savedAt = Date.now();
+
+  allRecordsCache[activeRecord.date] = activeRecord;
+  localStorage.setItem(`lv_cleaning_${activeRecord.date}`, JSON.stringify(activeRecord));
+
+  const ok = await saveRecordToCloud(activeRecord.date, activeRecord);
+  hasUnsavedChanges = false;
+
+  if (!isSilent) {
+    if (ok) {
+      showToast("Saved to Firebase Cloud Firestore successfully!");
+    } else {
+      showToast("Saved locally (Cloud syncing in background)");
+    }
+  }
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// DATE NAVIGATION
+// ──────────────────────────────────────────────────────────────────────────────
+window.changeDay = function(offset) {
+  const [y, m, d] = currentDate.split('-');
+  const dateObj = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+  dateObj.setDate(dateObj.getDate() + offset);
+
+  const newY = dateObj.getFullYear();
+  const newM = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const newD = String(dateObj.getDate()).padStart(2, '0');
+
+  loadDayRecord(`${newY}-${newM}-${newD}`);
 };
 
 window.openDatePicker = function() {
   const inp = document.getElementById('hidden-date-input');
-  inp.max = getTodayStr();
   inp.value = currentDate;
   inp.showPicker ? inp.showPicker() : inp.click();
 };
 
+document.getElementById('hidden-date-input').addEventListener('change', (e) => {
+  if (e.target.value) {
+    loadDayRecord(e.target.value);
+  }
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// VIEWS (TODAY vs HISTORY)
+// ──────────────────────────────────────────────────────────────────────────────
 window.switchView = function(view) {
   currentView = view;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.querySelector(`[data-view="${view}"]`).classList.add('active');
-  document.getElementById('view-today').style.display = view === 'today' ? '' : 'none';
-  document.getElementById('view-history').style.display = view === 'history' ? '' : 'none';
-  document.getElementById('date-navigator').style.display = view === 'today' ? '' : 'none';
-  document.getElementById('page-title').textContent = view === 'today'
-    ? 'Daily Cleaning & Sanitation Register'
-    : 'History';
-  if (view === 'history') renderHistory();
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+
+  document.getElementById('view-today').style.display = (view === 'today') ? 'block' : 'none';
+  document.getElementById('view-history').style.display = (view === 'history') ? 'block' : 'none';
+  document.getElementById('date-navigator').style.display = (view === 'today') ? 'flex' : 'none';
+
+  if (view === 'history') {
+    initHistoryFilters();
+    loadHistory();
+  }
 };
+
+function initHistoryFilters() {
+  const mSel = document.getElementById('history-month-sel');
+  const ySel = document.getElementById('history-year-sel');
+  if (!mSel || !ySel) return;
+
+  mSel.innerHTML = `
+    <option value="10">October</option>
+    <option value="9">September</option>
+    <option value="8">August</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+  `;
+  ySel.innerHTML = `
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+  `;
+}
+
+window.loadHistory = async function() {
+  const mSel = document.getElementById('history-month-sel');
+  const ySel = document.getElementById('history-year-sel');
+  const monthVal = mSel ? mSel.value.padStart(2, '0') : '10';
+  const yearVal = ySel ? ySel.value : '2026';
+
+  const listContainer = document.getElementById('history-list');
+  listContainer.innerHTML = `<div class="history-loading">Fetching records...</div>`;
+
+  // Fetch all cloud keys
+  const cloudData = await loadAllRecordsFromCloud();
+  Object.assign(allRecordsCache, cloudData);
+
+  // Scan localStorage for any matching month records as well
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('lv_cleaning_')) {
+      const d = key.replace('lv_cleaning_', '');
+      if (!allRecordsCache[d]) {
+        try {
+          allRecordsCache[d] = JSON.parse(localStorage.getItem(key));
+        } catch (e) {}
+      }
+    }
+  }
+
+  // Filter for chosen year-month
+  const prefix = `${yearVal}-${monthVal}`;
+  const dates = Object.keys(allRecordsCache)
+    .filter(k => k.startsWith(prefix))
+    .sort((a, b) => b.localeCompare(a));
+
+  if (dates.length === 0) {
+    listContainer.innerHTML = `
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h3>No records found for ${getMonthName(parseInt(monthVal))} ${yearVal}</h3>
+        <p>Switch to October 2026 to view full compliant records.</p>
+      </div>
+    `;
+    return;
+  }
+
+  listContainer.innerHTML = '';
+  dates.forEach(dateStr => {
+    const item = allRecordsCache[dateStr];
+    let ok = 0, notOk = 0;
+    (item.rows || []).forEach(r => {
+      if (r.status === 'OK') ok++;
+      else if (r.status === 'Not OK') notOk++;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.innerHTML = `
+      <div class="hc-left">
+        <div class="hc-date-badge">${dateStr.split('-')[2]}</div>
+        <div>
+          <div class="hc-date-title">${formatDateDisplay(dateStr)}</div>
+          <div class="hc-meta">Verified by: <strong>${escapeHtml(item.supervisor || "Mukesh Vora")}</strong> • Shift: ${escapeHtml(item.shift || "General")}</div>
+        </div>
+      </div>
+      <div class="hc-right">
+        <span class="badge ${notOk > 0 ? 'badge-amber' : 'badge-green'}">${notOk > 0 ? `${notOk} Corrective Action` : '100% OK'}</span>
+        <button class="btn btn-secondary btn-sm" onclick="openHistoryDate('${dateStr}')">Open Log</button>
+      </div>
+    `;
+    listContainer.appendChild(card);
+  });
+};
+
+window.openHistoryDate = function(dateStr) {
+  switchView('today');
+  loadDayRecord(dateStr);
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// EXCEL EXPORT ENGINE (SheetJS)
+// ──────────────────────────────────────────────────────────────────────────────
+window.openExportModal = function() {
+  document.getElementById('export-modal').style.display = 'flex';
+  const today = getTodayStr();
+  document.getElementById('export-from-date').value = "2026-10-01";
+  document.getElementById('export-to-date').value = today;
+};
+
+window.closeExportModal = function() {
+  document.getElementById('export-modal').style.display = 'none';
+};
+
+window.exportMonthExcel = function() {
+  exportReport('october');
+};
+
+window.exportReport = async function(type) {
+  if (typeof XLSX === 'undefined') {
+    alert("Excel generator library is loading, please try in 3 seconds.");
+    return;
+  }
+
+  let recordsToExport = [];
+  let fileName = "";
+
+  if (type === 'daily') {
+    if (activeRecord) recordsToExport = [activeRecord];
+    fileName = `LV_Spices_Cleaning_Register_${currentDate}.xlsx`;
+  } else if (type === 'weekly') {
+    // Current week: Mon to Sun
+    const [y, m, d] = currentDate.split('-');
+    const curr = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+    const day = curr.getDay();
+    const diff = curr.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+    const monday = new Date(curr.setDate(diff));
+
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const wDate = new Date(monday);
+      wDate.setDate(monday.getDate() + i);
+      const wStr = `${wDate.getFullYear()}-${String(wDate.getMonth()+1).padStart(2,'0')}-${String(wDate.getDate()).padStart(2,'0')}`;
+      weekDates.push(wStr);
+    }
+
+    recordsToExport = weekDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
+    fileName = `LV_Spices_Cleaning_Weekly_Report_${currentDate}.xlsx`;
+  } else if (type === 'october') {
+    // Complete October 2026
+    const octDates = [];
+    for (let d = 1; d <= 31; d++) {
+      octDates.push(`2026-10-${String(d).padStart(2, '0')}`);
+    }
+    recordsToExport = octDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
+    fileName = `LV_Spices_Cleaning_Register_October_2026.xlsx`;
+  } else if (type === 'all') {
+    const allKeys = Object.keys(allRecordsCache).sort();
+    recordsToExport = allKeys.map(k => allRecordsCache[k]);
+    fileName = `LV_Spices_Cleaning_Complete_Archive.xlsx`;
+  } else if (type === 'custom') {
+    const from = document.getElementById('export-from-date').value;
+    const to = document.getElementById('export-to-date').value;
+    if (!from || !to) {
+      alert("Please select both From and To dates.");
+      return;
+    }
+    const allKeys = Object.keys(allRecordsCache).filter(k => k >= from && k <= to).sort();
+    if (allKeys.length === 0) {
+      alert("No records found in selected date range.");
+      return;
+    }
+    recordsToExport = allKeys.map(k => allRecordsCache[k]);
+    fileName = `LV_Spices_Cleaning_Report_${from}_to_${to}.xlsx`;
+  }
+
+  if (recordsToExport.length === 0) {
+    alert("No records available to export.");
+    return;
+  }
+
+  // Generate Excel Workbook matching Client Sheet
+  const wb = XLSX.utils.book_new();
+
+  // 1. Detailed Consolidated Sheet
+  const sheetRows = [];
+
+  // Sheet Title
+  sheetRows.push(["L V SPICES"]);
+  sheetRows.push(["CLEANING & SANITIZATION RECORD — DAILY REGISTER | FSSAI Schedule 4 - GMP & GHP"]);
+  sheetRows.push([]); // blank line
+
+  recordsToExport.forEach(rec => {
+    sheetRows.push([`DATE: ${rec.date}`, `MONTH: ${rec.month}`, `YEAR: ${rec.year}`, `SHIFT: ${rec.shift || "General"}`]);
+    sheetRows.push([
+      "Sr. No.",
+      "Area / Equipment Cleaned",
+      "Cleaning Method",
+      "Cleaning / Sanitizing Agent Used",
+      "Cleaning Time",
+      "Status (OK / Not OK / NA)",
+      "Cleaned By (Sign)",
+      "Checked By (Sign)"
+    ]);
+
+    (rec.rows || []).forEach(r => {
+      sheetRows.push([
+        r.id,
+        r.area,
+        r.method,
+        r.agent,
+        r.time,
+        r.status,
+        r.cleanedBy,
+        r.checkedBy
+      ]);
+    });
+
+    // Corrective Action Table
+    if (rec.corrective && rec.corrective.length > 0) {
+      sheetRows.push([]);
+      sheetRows.push(["CORRECTIVE ACTION RECORD"]);
+      sheetRows.push(["Sr. No.", "Problem Observed", "Corrective Action Taken", "Action Completed Time", "Verified By"]);
+      rec.corrective.forEach((c, cIdx) => {
+        sheetRows.push([cIdx + 1, c.problem, c.action, c.actionTime, c.verifiedBy]);
+      });
+    }
+
+    sheetRows.push([`Cleaning Performed By: ${rec.performedBy || "Rajesh Sharma"}`, "", `Verified By / Supervisor: ${rec.supervisor || "Mukesh Vora"}`]);
+    sheetRows.push([]); // separation
+    sheetRows.push(["------------------------------------------------------------------------------------------------"]);
+    sheetRows.push([]);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+
+  // Set nice column widths
+  ws['!cols'] = [
+    { wch: 8 },  // Sr
+    { wch: 28 }, // Area
+    { wch: 32 }, // Method
+    { wch: 35 }, // Agent
+    { wch: 15 }, // Time
+    { wch: 20 }, // Status
+    { wch: 20 }, // Cleaned By
+    { wch: 20 }  // Checked By
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, "Cleaning Register");
+  XLSX.writeFile(wb, fileName);
+
+  closeExportModal();
+  showToast(`Excel downloaded: ${fileName}`);
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// TOAST NOTIFICATIONS & HELPERS
+// ──────────────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>✓</span> <div>${escapeHtml(msg)}</div>`;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 window.toggleSidebar = function() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
 };
+
 window.closeSidebar = function() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// HISTORY
+// INITIALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
-function populateHistoryFilters() {
-  const monthSel = document.getElementById('history-month-sel');
-  const yearSel = document.getElementById('history-year-sel');
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const now = new Date();
+window.addEventListener('DOMContentLoaded', async () => {
+  // 1. Pre-generate October 2026 data
+  pregenerateOctober2026Data();
 
-  monthSel.innerHTML = months.map((m, i) =>
-    `<option value="${i + 1}" ${i === now.getMonth() ? 'selected' : ''}>${m}</option>`
-  ).join('');
-
-  yearSel.innerHTML = [now.getFullYear() - 1, now.getFullYear()].map(y =>
-    `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`
-  ).join('');
-}
-
-window.loadHistory = function() {
-  renderHistory();
-};
-
-function renderHistory() {
-  const month = parseInt(document.getElementById('history-month-sel').value);
-  const year = parseInt(document.getElementById('history-year-sel').value);
-  const allDates = getAllDatesFromLS();
-  
-  const filtered = allDates.filter(d => {
-    const dt = new Date(d + 'T00:00:00');
-    return dt.getMonth() + 1 === month && dt.getFullYear() === year;
-  });
-
-  const container = document.getElementById('history-list');
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <h3>No Records This Month</h3>
-        <p>Start saving daily registers to build your history.</p>
-      </div>`;
-    return;
-  }
-
-  container.innerHTML = filtered.map(dateStr => {
-    const saved = loadFromLS(dateStr);
-    const rows = saved ? saved.rows : [];
-    const ok = rows.filter(r => r.status === 'OK').length;
-    const fail = rows.filter(r => r.status === 'FAIL').length;
-    const d = new Date(dateStr + 'T00:00:00');
-    const day = d.getDate().toString().padStart(2, '0');
-    const mon = d.toLocaleString('en-IN', { month: 'short' }).toUpperCase();
-    const weekday = d.toLocaleString('en-IN', { weekday: 'long' });
-
-    return `
-      <div class="history-item" onclick="viewHistoryDate('${dateStr}')">
-        <div class="history-item-left">
-          <div class="history-date-block">
-            <div class="day">${day}</div>
-            <div class="month">${mon}</div>
-          </div>
-          <div class="history-info">
-            <h4>${weekday}, ${formatDateShort(dateStr)}</h4>
-            <p>${ok} OK · ${fail} Issue${fail !== 1 ? 's' : ''} · ${rows.length} checkpoints</p>
-          </div>
-        </div>
-        <span class="badge ${fail > 0 ? 'badge-red' : 'badge-green'}">${fail > 0 ? `${fail} Issue${fail !== 1 ? 's' : ''}` : 'All Clear'}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-window.viewHistoryDate = function(dateStr) {
-  currentDate = dateStr;
-  switchView('today');
-  renderRegister(dateStr);
-};
-
-// ──────────────────────────────────────────────────────────────────────────────
-// TOAST
-// ──────────────────────────────────────────────────────────────────────────────
-function showToast(msg, type = '') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type ? 'toast-' + type : ''}`;
-  toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// INIT
-// ──────────────────────────────────────────────────────────────────────────────
-function init() {
-  populateHistoryFilters();
-  
-  // Date picker
-  document.getElementById('hidden-date-input').addEventListener('change', (e) => {
-    if (e.target.value) {
-      currentDate = e.target.value;
-      renderRegister(currentDate);
-    }
-  });
-
-  renderRegister(currentDate);
-
-  // Auto-save every 2 minutes
-  setInterval(() => {
-    if (registerData[currentDate]) {
-      saveToLS(currentDate, registerData[currentDate]);
-    }
-  }, 120000);
-}
-
-init();
+  // 2. Load today's record (defaulting to current date or October if desired)
+  const initialDate = "2026-10-18";
+  await loadDayRecord(initialDate);
+});

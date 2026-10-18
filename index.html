@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LV Spices — Daily Cleaning & Sanitation Register</title>
-  <meta name="description" content="LV Spices Daily Hygiene & Sanitation Register — FSSAI GMP compliant daily cleaning records." />
+  <title>L V Spices — Cleaning & Sanitization Register</title>
+  <meta name="description" content="L V Spices Daily Cleaning & Sanitation Register — FSSAI Schedule 4 GMP & GHP Compliant Records." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- SheetJS for Excel Exports -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
@@ -20,31 +22,38 @@
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <div class="brand-logo-wrap">
+        <!-- LV SPICES CUSTOM CREST LOGO -->
+        <svg class="lv-logo-svg" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="21" fill="#8C1C2A" stroke="#D4AF37" stroke-width="1.5"/>
+          <circle cx="22" cy="22" r="18" fill="none" stroke="#D4AF37" stroke-dasharray="2 2" stroke-width="0.8"/>
+          <path d="M22 8L24 14L30 16L24 18L22 24L20 18L14 16L20 14Z" fill="#D4AF37"/>
+          <text x="22" y="32" font-family="'Inter', sans-serif" font-size="7.5" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">L V SPICES</text>
+        </svg>
       </div>
       <div class="brand-text">
-        <h1>LV Spices</h1>
-        <span>Cleaning Register</span>
+        <h1>L V SPICES</h1>
+        <span>Hygiene & Sanitization</span>
       </div>
     </div>
 
     <nav class="sidebar-nav">
       <a class="nav-item active" data-view="today" onclick="switchView('today')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Today's Register
+        Daily Register
       </a>
       <a class="nav-item" data-view="history" onclick="switchView('history')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        History
+        Past Logs & Archive
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <div class="live-badge">
-        <span class="live-dot"></span>
-        <span>Auto-Saved</span>
+      <div class="cloud-badge connected" id="cloud-status-badge">
+        <span class="cloud-dot" id="cloud-status-dot"></span>
+        <span id="cloud-status-text">Cloud Synced (Firestore)</span>
       </div>
+      <div class="fssai-pill">FSSAI Schedule 4 • GMP & GHP</div>
     </div>
   </aside>
 
@@ -55,7 +64,10 @@
         <button class="mobile-menu-btn" onclick="toggleSidebar()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
-        <h2 class="page-title" id="page-title">Daily Cleaning & Sanitation Register</h2>
+        <div>
+          <h2 class="page-title" id="page-title">Cleaning & Sanitization Record</h2>
+          <div class="page-subtitle">Daily Hygiene Checklist • FSSAI GMP & GHP</div>
+        </div>
         <div class="date-navigator" id="date-navigator">
           <button class="date-nav-btn" id="btn-prev-day" onclick="changeDay(-1)" title="Previous Day">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
@@ -70,90 +82,105 @@
         </div>
       </div>
       <div class="topbar-right">
-        <button class="btn btn-secondary btn-sm" onclick="window.print()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Print
+        <!-- Excel Export Button -->
+        <button class="btn btn-export-excel" onclick="openExportModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/><polyline points="10 9 9 9 8 9"/></svg>
+          Export Excel (.xlsx)
         </button>
         <button class="btn btn-primary btn-sm" onclick="saveRegister()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save
+          Save to Cloud
         </button>
       </div>
     </header>
 
     <!-- TODAY VIEW -->
     <div class="content-area" id="view-today">
-      <div class="print-title">LV SPICES — DAILY HYGIENE & SANITATION REGISTER</div>
 
-      <!-- Stats Row -->
+      <!-- Header Info Banner matching Official Format -->
+      <div class="official-sheet-header">
+        <div class="osh-brand">
+          <div class="osh-title">L V SPICES</div>
+          <div class="osh-doc-name">CLEANING & SANITIZATION RECORD</div>
+          <div class="osh-sub">DAILY CLEANING & SANITATION REGISTER | FSSAI Schedule 4 - GMP & GHP</div>
+        </div>
+        <div class="osh-meta-grid">
+          <div class="osh-field">
+            <span class="osh-label">Date:</span>
+            <span class="osh-val" id="header-date">—</span>
+          </div>
+          <div class="osh-field">
+            <span class="osh-label">Month:</span>
+            <span class="osh-val" id="header-month">—</span>
+          </div>
+          <div class="osh-field">
+            <span class="osh-label">Year:</span>
+            <span class="osh-val" id="header-year">—</span>
+          </div>
+          <div class="osh-field">
+            <span class="osh-label">Shift:</span>
+            <span class="osh-val" id="header-shift">General Shift</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Bar -->
       <div class="stats-row" id="stats-row">
         <div class="stat-card green">
-          <div class="stat-label">✓ OK</div>
-          <div class="stat-value" id="stat-ok">0</div>
-          <div class="stat-sub">Checkpoints Cleared</div>
+          <div class="stat-label">OK (Compliant)</div>
+          <div class="stat-value" id="stat-ok">12</div>
+          <div class="stat-sub">Passed Sanitation Standard</div>
         </div>
         <div class="stat-card red">
-          <div class="stat-label">✗ Issues</div>
+          <div class="stat-label">Not OK / Issues</div>
           <div class="stat-value" id="stat-issues">0</div>
-          <div class="stat-sub">Need Attention</div>
+          <div class="stat-sub">Corrective Action Required</div>
         </div>
         <div class="stat-card amber">
-          <div class="stat-label">NA Items</div>
+          <div class="stat-label">NA Checkpoints</div>
           <div class="stat-value" id="stat-na">0</div>
-          <div class="stat-sub">Not Applicable</div>
+          <div class="stat-sub">Not Applicable Today</div>
         </div>
         <div class="stat-card brand">
-          <div class="stat-label">Completion</div>
-          <div class="stat-value" id="stat-pct">0%</div>
-          <div class="stat-sub">Today's Score</div>
+          <div class="stat-label">Audit Score</div>
+          <div class="stat-value" id="stat-pct">100%</div>
+          <div class="stat-sub">Compliance Verified</div>
         </div>
       </div>
 
-      <!-- Header Info Card -->
-      <div class="register-header-card">
-        <div class="register-header-grid">
-          <div class="rh-field">
-            <label>Date</label>
-            <div class="rh-value" id="header-date">—</div>
-          </div>
-          <div class="rh-field">
-            <label>Shift</label>
-            <div class="rh-value">Day (6 AM – 6 PM)</div>
-          </div>
-          <div class="rh-field">
-            <label>Supervisor</label>
-            <div class="rh-value">Rajesh Sharma</div>
-          </div>
-          <div class="rh-field">
-            <label>Area</label>
-            <div class="rh-value">LV Spices Production Unit</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Checklist Table -->
+      <!-- Checklist Table matching Client PDF Columns -->
       <div class="checklist-card">
         <div class="card-header">
           <div class="card-header-left">
             <div class="card-header-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-              <div class="card-title">1. Daily Cleaning & Hygiene Checklist</div>
-              <div class="card-subtitle">All 18 checkpoints — auto-filled, editable</div>
+              <div class="card-title">Daily Cleaning & Sanitation Register</div>
+              <div class="card-subtitle">Click on any status pill or text cell to edit manually</div>
             </div>
           </div>
-          <span class="badge badge-blue" id="checklist-status-badge">Auto-Filled</span>
+          <div class="card-header-actions">
+            <button class="btn btn-outline-sm" onclick="markAllStatus('OK')" title="Mark all checkpoints OK">
+              ✓ All OK
+            </button>
+            <button class="btn btn-outline-sm" onclick="addNewCheckpointRow()">
+              + Add Custom Area
+            </button>
+          </div>
         </div>
         <div class="register-table-wrap">
-          <table class="register-table">
+          <table class="register-table" id="table-cleaning">
             <thead>
               <tr>
-                <th style="width:44px">Sr.</th>
-                <th>Cleaning / Hygiene Checkpoint</th>
-                <th class="center" style="width:160px">Status (✓/✗/NA)</th>
-                <th style="width:110px">Time</th>
-                <th style="width:130px">Staff Sign</th>
+                <th style="width:48px; text-align:center;">Sr. No.</th>
+                <th style="min-width:180px;">Area / Equipment Cleaned</th>
+                <th style="min-width:170px;">Cleaning Method</th>
+                <th style="min-width:180px;">Cleaning / Sanitizing Agent Used</th>
+                <th style="width:105px; text-align:center;">Cleaning Time</th>
+                <th style="width:130px; text-align:center;">Status</th>
+                <th style="width:130px;">Cleaned By (Sign)</th>
+                <th style="width:130px;">Checked By (Sign)</th>
               </tr>
             </thead>
             <tbody id="checklist-body">
@@ -163,30 +190,30 @@
         </div>
       </div>
 
-      <!-- Corrective Actions (shown only if issues exist) -->
-      <div class="corrective-section" id="corrective-section" style="display:none;">
+      <!-- Table 2: Corrective Action Record (Matching Client PDF) -->
+      <div class="corrective-section" id="corrective-section">
         <div class="card-header">
           <div class="card-header-left">
-            <div class="card-header-icon" style="background:#FFFBEB;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div class="card-header-icon warning-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             </div>
             <div>
-              <div class="card-title" style="color:#92400E;">2. Corrective Action Record</div>
-              <div class="card-subtitle">For checkpoints marked ✗</div>
+              <div class="card-title">Corrective Action Record</div>
+              <div class="card-subtitle">Deficiencies observed and immediate corrective measures taken</div>
             </div>
           </div>
-          <span class="badge badge-red" id="issues-count-badge">0 Issues</span>
+          <button class="btn btn-outline-sm" onclick="addCorrectiveRow()">+ Add Observation</button>
         </div>
         <div class="register-table-wrap">
           <table class="corrective-table">
             <thead>
               <tr>
-                <th style="width:44px">Sr.</th>
-                <th>Checkpoint</th>
-                <th>Problem Observed</th>
-                <th>Corrective Action Taken</th>
-                <th style="width:110px">Action Time</th>
-                <th style="width:120px">Verified By</th>
+                <th style="width:48px; text-align:center;">Sr. No.</th>
+                <th style="min-width:220px;">Problem Observed</th>
+                <th style="min-width:260px;">Corrective Action Taken</th>
+                <th style="width:130px; text-align:center;">Action Completed Time</th>
+                <th style="width:140px;">Verified By</th>
+                <th style="width:50px; text-align:center;">Action</th>
               </tr>
             </thead>
             <tbody id="corrective-body">
@@ -196,33 +223,124 @@
         </div>
       </div>
 
+      <!-- Footer Sign-off Block matching client PDF -->
+      <div class="official-footer-card">
+        <div class="ofc-sign-grid">
+          <div class="ofc-sign-box">
+            <div class="ofc-sign-label">Cleaning Performed By:</div>
+            <input class="ofc-sign-input" id="sign-performed-by" value="Rajesh Sharma / Team" onchange="markUnsaved()" />
+          </div>
+          <div class="ofc-sign-box">
+            <div class="ofc-sign-label">Verified By / Supervisor:</div>
+            <input class="ofc-sign-input" id="sign-supervisor" value="Mukesh Vora" onchange="markUnsaved()" />
+          </div>
+          <div class="ofc-sign-box">
+            <div class="ofc-sign-label">Supervisor Signature:</div>
+            <div class="ofc-sign-signature">M. Vora (QA Verified)</div>
+          </div>
+        </div>
+        <div class="ofc-instructions">
+          <strong>Instructions:</strong> Follow the approved cleaning schedule. Clean food-contact surfaces before use and after use/product change as needed. Use suitable agents where applicable. Document any deficiency and corrective action.<br>
+          <span style="font-size:11px; color:#64748B;">Suggested FSSAI Schedule 4-aligned record format; not a government-prescribed form. Use one sheet per day; mark NA where a checkpoint is not applicable.</span>
+        </div>
+      </div>
+
     </div><!-- end view-today -->
 
     <!-- HISTORY VIEW -->
     <div class="content-area" id="view-history" style="display:none;">
-      <div class="history-filters">
-        <select class="history-select" id="history-month-sel" onchange="loadHistory()">
-          <!-- months filled by JS -->
-        </select>
-        <select class="history-select" id="history-year-sel" onchange="loadHistory()">
-          <!-- years filled by JS -->
-        </select>
-        <button class="btn btn-secondary btn-sm" onclick="loadHistory()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-          Refresh
+      <div class="history-top-bar">
+        <div class="history-filters">
+          <select class="history-select" id="history-month-sel" onchange="loadHistory()">
+            <!-- months filled by JS -->
+          </select>
+          <select class="history-select" id="history-year-sel" onchange="loadHistory()">
+            <!-- years filled by JS -->
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="loadHistory()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Refresh
+          </button>
+        </div>
+        <button class="btn btn-export-excel" onclick="exportMonthExcel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Selected Month (.xlsx)
         </button>
       </div>
       <div class="history-list" id="history-list">
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <h3>No Records Found</h3>
-          <p>Save today's register to start building history.</p>
-        </div>
+        <!-- Rendered by JS -->
       </div>
     </div>
 
   </div><!-- end main-wrapper -->
 </div><!-- end app-container -->
+
+<!-- EXCEL EXPORT MODAL -->
+<div class="modal-backdrop" id="export-modal" style="display:none;" onclick="closeExportModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-with-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8C1C2A" stroke-width="2" width="22" height="22"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/></svg>
+        <h3>Download Excel Reports (.xlsx)</h3>
+      </div>
+      <button class="modal-close" onclick="closeExportModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:#64748B; font-size:13px; margin-bottom:16px;">Download official FSSAI Schedule 4 formatted cleaning records for audits and inspections.</p>
+      
+      <div class="export-options-grid">
+        <button class="export-option-card" onclick="exportReport('daily')">
+          <div class="eoc-icon">📅</div>
+          <div class="eoc-content">
+            <strong>Today's Daily Register</strong>
+            <span>Active date sheet with checkpoints and corrective actions</span>
+          </div>
+          <div class="eoc-arrow">→</div>
+        </button>
+
+        <button class="export-option-card" onclick="exportReport('weekly')">
+          <div class="eoc-icon">📆</div>
+          <div class="eoc-content">
+            <strong>Current Week's Report</strong>
+            <span>Monday through Sunday summary with audit compliance</span>
+          </div>
+          <div class="eoc-arrow">→</div>
+        </button>
+
+        <button class="export-option-card" onclick="exportReport('october')">
+          <div class="eoc-icon">📊</div>
+          <div class="eoc-content">
+            <strong>October 2026 Full Register</strong>
+            <span>Complete month records (all 31 days data sheet)</span>
+          </div>
+          <div class="eoc-arrow">→</div>
+        </button>
+
+        <button class="export-option-card" onclick="exportReport('all')">
+          <div class="eoc-icon">🗄️</div>
+          <div class="eoc-content">
+            <strong>All Records (Complete Archive)</strong>
+            <span>All historical logs stored in Cloud Firestore</span>
+          </div>
+          <div class="eoc-arrow">→</div>
+        </button>
+      </div>
+
+      <div class="custom-range-box">
+        <div style="font-weight:600; font-size:13px; margin-bottom:8px;">Custom Date Range:</div>
+        <div class="range-inputs">
+          <input type="date" id="export-from-date" class="form-input-sm" />
+          <span>to</span>
+          <input type="date" id="export-to-date" class="form-input-sm" />
+          <button class="btn btn-secondary btn-sm" onclick="exportReport('custom')">Download Range</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeExportModal()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- Toast Container -->
 <div class="toast-container" id="toast-container"></div>
