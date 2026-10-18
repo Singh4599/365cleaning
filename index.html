@@ -30,6 +30,9 @@
         <h1>L V SPICES</h1>
         <span>Hygiene & Sanitization</span>
       </div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Close Navigation Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
     <nav class="sidebar-nav">
@@ -43,13 +46,7 @@
       </a>
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="cloud-badge connected" id="cloud-status-badge">
-        <span class="cloud-dot" id="cloud-status-dot"></span>
-        <span id="cloud-status-text">Cloud Synced (Firestore)</span>
-      </div>
-      <div class="fssai-pill">FSSAI Schedule 4 • GMP & GHP</div>
-    </div>
+    <!-- Sidebar footer removed to showcase pure spice photography matching reference mockup -->
   </aside>
 
   <!-- ── MAIN ── -->
@@ -77,6 +74,10 @@
         </div>
       </div>
       <div class="topbar-right">
+        <div class="cloud-badge connected" id="cloud-status-badge">
+          <span class="cloud-dot" id="cloud-status-dot"></span>
+          <span id="cloud-status-text">Cloud Synced</span>
+        </div>
         <!-- Excel Export Button -->
         <button class="btn btn-export-excel" onclick="openExportModal()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -192,6 +193,10 @@
             </button>
           </div>
         </div>
+        <div class="mobile-table-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+          <span>Swipe horizontally to view all columns • Tap any cell to edit</span>
+        </div>
         <div class="register-table-wrap">
           <table class="register-table" id="table-cleaning">
             <thead>
@@ -226,6 +231,10 @@
             </div>
           </div>
           <button class="btn btn-outline-sm" onclick="addCorrectiveRow()">+ Add Observation</button>
+        </div>
+        <div class="mobile-table-hint">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+          <span>Swipe horizontally to view corrective actions</span>
         </div>
         <div class="register-table-wrap">
           <table class="corrective-table">

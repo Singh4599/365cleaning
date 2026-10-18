@@ -681,6 +681,7 @@ document.getElementById('hidden-date-input').addEventListener('change', (e) => {
 // VIEWS (TODAY vs HISTORY)
 // ──────────────────────────────────────────────────────────────────────────────
 window.switchView = function(view) {
+  if (window.closeSidebar) window.closeSidebar();
   currentView = view;
   document.querySelectorAll('.nav-item').forEach(el => {
     el.classList.toggle('active', el.dataset.view === view);
