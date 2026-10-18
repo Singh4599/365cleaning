@@ -48,7 +48,18 @@
   --sidebar-w: 240px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
 body {
   font-family: var(--font-family);
   background: var(--bg-app);
@@ -56,11 +67,20 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
+  position: relative;
 }
 
 /* ── LAYOUT ── */
-.app-container { display: flex; min-height: 100vh; }
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 /* ── SIDEBAR ── */
 .sidebar {
@@ -78,7 +98,7 @@ body {
   position: fixed;
   top: 0; left: 0;
   height: 100vh;
-  z-index: 100;
+  z-index: 1000;
   box-shadow: 4px 0 24px rgba(0,0,0,0.22);
   color: #FFFFFF;
 }
@@ -151,7 +171,11 @@ body {
 /* ── MAIN WRAPPER ── */
 .main-wrapper {
   margin-left: var(--sidebar-w);
-  flex: 1;
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -288,7 +312,14 @@ body {
 .btn-sm { padding: 6px 12px; font-size: 12px; }
 
 /* ── MAIN CONTENT ── */
-.content-area { flex: 1; padding: 28px; }
+.content-area {
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 28px;
+}
 
 /* ── HEADER INFO CARD ── */
 .register-header-card {
@@ -688,10 +719,10 @@ body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  z-index: 998;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 990;
   opacity: 0;
   transition: opacity 0.25s ease;
 }
@@ -1163,10 +1194,12 @@ body {
     width: 280px;
     max-width: 85vw;
     box-shadow: none;
+    z-index: 1000 !important;
   }
   .sidebar.open {
     transform: translateX(0);
     box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    z-index: 1000 !important;
   }
   .sidebar-close-btn {
     display: flex;
