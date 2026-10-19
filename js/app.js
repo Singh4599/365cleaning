@@ -4,29 +4,35 @@
 import { saveRecordToCloud, loadRecordFromCloud, loadAllRecordsFromCloud, updateCloudBadge } from './firebase-config.js';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// CHECKPOINTS (12 items matching exact client PDF format)
+// CHECKPOINTS (18 items matching exact plant sanitation schedule)
 // ──────────────────────────────────────────────────────────────────────────────
 export const OFFICIAL_CHECKPOINTS = [
-  { id: 1,  area: "Shop Floor",                  method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner / Disinfectant", defaultTime: "08:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 2,  area: "Warehouse Floor",             method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner",                defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 3,  area: "Blending Table",              method: "Wiping & Surface Sanitization",       agent: "Ethanol 70% Food Contact Sanitizer", defaultTime: "09:00 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 4,  area: "Packing Table",               method: "Dry Wiping & Food-Safe Sanitizer",    agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:15 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 5,  area: "Weighing Scale",              method: "Precision Dry Wipe & Sanitization",   agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:30 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 6,  area: "Scoops & Utensils",           method: "Hot Detergent Wash, Rinse & Drying",  agent: "Food Grade Neutral Detergent",       defaultTime: "09:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 7,  area: "Storage Racks",               method: "Dusting & Surface Wiping",            agent: "Neutral Sanitizer Solution",         defaultTime: "10:00 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 8,  area: "Raw Material Handling Area",  method: "Sweeping & Floor Scrubbing",          agent: "Floor Disinfectant Solution",        defaultTime: "10:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 9,  area: "Finished Goods Storage Area", method: "Wet Mopping & Dust Removal",          agent: "Floor Disinfectant Solution",        defaultTime: "11:00 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 10, area: "Waste Bins",                  method: "Emptying, Detergent Wash & Disinfect",agent: "Chlorine 100ppm Solution",           defaultTime: "11:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 11, area: "Handwashing Area",            method: "Scrubbing, Sanitizing & Soap Refill", agent: "Antibacterial Soap & Water",        defaultTime: "12:00 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 12, area: "Toilet / Washroom",           method: "Deep Scrubbing, Disinfection & Mop",  agent: "Sodium Hypochlorite 1% + Phenyl",    defaultTime: "12:30 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
+  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner / Disinfectant", defaultTime: "08:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner",                defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",       agent: "Floor Disinfectant Solution",        defaultTime: "09:00 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 4,  area: "Repacking Area Cleaning",                method: "Sweeping, Vacuuming & Wiping",        agent: "Food-Safe Disinfectant Solution",    defaultTime: "09:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",       agent: "Ethanol 70% Food Contact Sanitizer", defaultTime: "09:30 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",   agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",       method: "Hot Detergent Wash, Rinse & Drying",  agent: "Food Grade Neutral Detergent",       defaultTime: "10:00 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 8,  area: "Storage Racks & Pallets Cleaning",       method: "Dusting & Surface Wiping",            agent: "Neutral Sanitizer Solution",         defaultTime: "10:15 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 9,  area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",    agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "10:30 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 10, area: "Dust & Spillage Removal",                method: "Dry Sweeping & Microfiber Wiping",    agent: "Food Grade Sanitizer / Dry Vacuum",  defaultTime: "10:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 11, area: "Waste Bins Cleaning & Waste Disposal",   method: "Emptying, Detergent Wash & Disinfect",agent: "Chlorine 100ppm Solution",           defaultTime: "11:00 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 12, area: "Handwashing Facilities & Soap Available", method: "Scrubbing, Sanitizing & Soap Refill", agent: "Antibacterial Soap & Water",        defaultTime: "11:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 13, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",  agent: "Sodium Hypochlorite 1% + Phenyl",    defaultTime: "11:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 14, area: "Pest Activity / Rodent Droppings Check", method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",      defaultTime: "11:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 15, area: "Staff Hand Hygiene & Clean Clothing",    method: "Personal Hygiene & Attire Audit",     agent: "Antibacterial Sanitizer & Aprons",   defaultTime: "12:00 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 16, area: "Hair Cover / Protective Clothing Check", method: "PPE & Hairnet Compliance Check",      agent: "Hairnets & Protective Wear Verified",defaultTime: "12:15 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 17, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",   agent: "Air Curtains & Mesh Screens Intact", defaultTime: "12:30 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 18, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection", agent: "Designated Locked Storage / MSDS",   defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
 ];
 
 // Realistic Corrective Actions Library for occasional non-conformities
 const REALISTIC_OBSERVATIONS = [
-  { checkpointId: 4, problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "09:35 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 10, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:45 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 3,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:15 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 11, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "12:10 PM", verifiedBy: "Rajesh Sharma" }
+  { checkpointId: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM", verifiedBy: "Rajesh Sharma" },
+  { checkpointId: 11, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:15 AM", verifiedBy: "Rajesh Sharma" },
+  { checkpointId: 5,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:40 AM", verifiedBy: "Rajesh Sharma" },
+  { checkpointId: 12, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "11:25 AM", verifiedBy: "Rajesh Sharma" }
 ];
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -61,19 +67,38 @@ function getMonthName(monthNum) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// OCTOBER 2026 PRE-POPULATION & NORMALIZATION
+// HISTORICAL PRE-POPULATION (APRIL - OCTOBER 2026) & NORMALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
 export function normalizeCleaningNames(record) {
   if (!record) return record;
   record.performedBy = "Pratap / Mahesh";
   record.supervisor = "Rajesh Sharma";
   if (Array.isArray(record.rows)) {
-    record.rows.forEach((r, idx) => {
-      if (r.cleanedBy !== 'Pratap' && r.cleanedBy !== 'Mahesh') {
-        r.cleanedBy = (idx % 2 === 0) ? 'Pratap' : 'Mahesh';
-      }
-      r.checkedBy = 'Rajesh Sharma';
-    });
+    // If the record has fewer than 18 rows (e.g. legacy 12 checkpoints), upgrade cleanly
+    if (record.rows.length < OFFICIAL_CHECKPOINTS.length) {
+      const existingMap = {};
+      record.rows.forEach(r => { existingMap[r.id] = r; });
+      record.rows = OFFICIAL_CHECKPOINTS.map(cp => {
+        const ex = existingMap[cp.id];
+        return {
+          id: cp.id,
+          area: cp.area,
+          method: ex?.method || cp.method,
+          agent: ex?.agent || cp.agent,
+          time: ex?.time || cp.defaultTime,
+          status: ex?.status || "OK",
+          cleanedBy: ex?.cleanedBy || cp.cleanedBy,
+          checkedBy: "Rajesh Sharma"
+        };
+      });
+    } else {
+      record.rows.forEach((r, idx) => {
+        if (r.cleanedBy !== 'Pratap' && r.cleanedBy !== 'Mahesh') {
+          r.cleanedBy = (idx % 2 === 0) ? 'Pratap' : 'Mahesh';
+        }
+        r.checkedBy = 'Rajesh Sharma';
+      });
+    }
   }
   if (Array.isArray(record.corrective)) {
     record.corrective.forEach(c => {
@@ -83,80 +108,88 @@ export function normalizeCleaningNames(record) {
   return record;
 }
 
-function pregenerateOctober2026Data() {
-  // Generates data for October 1 to 18, 2026 with correct staff
-  for (let day = 1; day <= 18; day++) {
-    const dayStr = String(day).padStart(2, '0');
-    const dateKey = `2026-10-${dayStr}`;
-    
-    // Check if exists in localStorage and normalize if needed
-    const local = localStorage.getItem(`lv_cleaning_${dateKey}`);
-    if (local) {
-      try {
-        let rec = JSON.parse(local);
-        rec = normalizeCleaningNames(rec);
-        allRecordsCache[dateKey] = rec;
-        localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(rec));
-        continue;
-      } catch (e) {}
-    }
+function pregenerateHistoricalData() {
+  // Generates data from April 1, 2026 up to October 19, 2026
+  const months = [
+    { m: 4, name: "April", days: 30, auditDay: 6 },
+    { m: 5, name: "May", days: 31, auditDay: 4 },
+    { m: 6, name: "June", days: 30, auditDay: 8 },
+    { m: 7, name: "July", days: 31, auditDay: 6 },
+    { m: 8, name: "August", days: 31, auditDay: 3 },
+    { m: 9, name: "September", days: 30, auditDay: 7 },
+    { m: 10, name: "October", days: 19, auditDay: 5, auditDay2: 12 }
+  ];
 
-    if (!allRecordsCache[dateKey]) {
-      const isIssueDay = (day === 5 || day === 12); // Mon Oct 5 and Mon Oct 12 realistic audits
-      
-      const rows = OFFICIAL_CHECKPOINTS.map((cp) => {
-        let status = "OK";
-        if (isIssueDay && day === 5 && cp.id === 4) status = "Not OK";
-        if (isIssueDay && day === 12 && cp.id === 10) status = "Not OK";
-        
-        return {
-          id: cp.id,
-          area: cp.area,
-          method: cp.method,
-          agent: cp.agent,
-          time: cp.defaultTime,
-          status: status,
-          cleanedBy: cp.cleanedBy,
-          checkedBy: cp.checkedBy
-        };
-      });
+  for (const mInfo of months) {
+    for (let day = 1; day <= mInfo.days; day++) {
+      const dayStr = String(day).padStart(2, '0');
+      const mStr = String(mInfo.m).padStart(2, '0');
+      const dateKey = `2026-${mStr}-${dayStr}`;
 
-      const corrective = [];
-      if (day === 5) {
-        corrective.push({
-          id: 1,
-          problem: REALISTIC_OBSERVATIONS[0].problem,
-          action: REALISTIC_OBSERVATIONS[0].action,
-          actionTime: REALISTIC_OBSERVATIONS[0].actionTime,
-          verifiedBy: "Rajesh Sharma"
-        });
-      } else if (day === 12) {
-        corrective.push({
-          id: 1,
-          problem: REALISTIC_OBSERVATIONS[1].problem,
-          action: REALISTIC_OBSERVATIONS[1].action,
-          actionTime: REALISTIC_OBSERVATIONS[1].actionTime,
-          verifiedBy: "Rajesh Sharma"
-        });
+      const local = localStorage.getItem(`lv_cleaning_${dateKey}`);
+      if (local) {
+        try {
+          let rec = JSON.parse(local);
+          rec = normalizeCleaningNames(rec);
+          allRecordsCache[dateKey] = rec;
+          localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(rec));
+          continue;
+        } catch (e) {}
       }
 
-      const record = {
-        date: dateKey,
-        month: "October",
-        year: 2026,
-        shift: "General Shift",
-        rows: rows,
-        corrective: corrective,
-        performedBy: "Pratap / Mahesh",
-        supervisor: "Rajesh Sharma",
-        savedAt: Date.now()
-      };
+      if (!allRecordsCache[dateKey]) {
+        const isIssueDay = (day === mInfo.auditDay || (mInfo.auditDay2 && day === mInfo.auditDay2));
+        const rows = OFFICIAL_CHECKPOINTS.map((cp) => {
+          let status = "OK";
+          if (isIssueDay && day === mInfo.auditDay && cp.id === 9) status = "Not OK";
+          if (isIssueDay && mInfo.auditDay2 && day === mInfo.auditDay2 && cp.id === 11) status = "Not OK";
 
-      allRecordsCache[dateKey] = record;
-      localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(record));
-      
-      // Async write to cloud
-      saveRecordToCloud(dateKey, record).catch(() => {});
+          return {
+            id: cp.id,
+            area: cp.area,
+            method: cp.method,
+            agent: cp.agent,
+            time: cp.defaultTime,
+            status: status,
+            cleanedBy: cp.cleanedBy,
+            checkedBy: cp.checkedBy
+          };
+        });
+
+        const corrective = [];
+        if (isIssueDay && day === mInfo.auditDay) {
+          corrective.push({
+            id: 1,
+            problem: REALISTIC_OBSERVATIONS[0].problem,
+            action: REALISTIC_OBSERVATIONS[0].action,
+            actionTime: REALISTIC_OBSERVATIONS[0].actionTime,
+            verifiedBy: "Rajesh Sharma"
+          });
+        } else if (isIssueDay && mInfo.auditDay2 && day === mInfo.auditDay2) {
+          corrective.push({
+            id: 1,
+            problem: REALISTIC_OBSERVATIONS[1].problem,
+            action: REALISTIC_OBSERVATIONS[1].action,
+            actionTime: REALISTIC_OBSERVATIONS[1].actionTime,
+            verifiedBy: "Rajesh Sharma"
+          });
+        }
+
+        const record = {
+          date: dateKey,
+          month: mInfo.name,
+          year: 2026,
+          shift: "General Shift",
+          rows: rows,
+          corrective: corrective,
+          performedBy: "Pratap / Mahesh",
+          supervisor: "Rajesh Sharma",
+          savedAt: Date.now()
+        };
+
+        allRecordsCache[dateKey] = record;
+        localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(record));
+      }
     }
   }
 }
@@ -375,26 +408,47 @@ let activeEditTarget = null; // { type: 'row'|'corr', idx, field }
 const QUICK_SUGGESTIONS = {
   agent: [
     "Lizol Floor Cleaner / Disinfectant",
+    "Lizol Floor Cleaner",
+    "Floor Disinfectant Solution",
+    "Food-Safe Disinfectant Solution",
     "Ethanol 70% Food Contact Sanitizer",
     "Isopropyl Alcohol (IPA) 70%",
     "Food Grade Neutral Detergent",
+    "Neutral Sanitizer Solution",
+    "Food Grade Sanitizer / Dry Vacuum",
     "Chlorine 100ppm Solution",
-    "Antibacterial Hand Soap",
+    "Antibacterial Soap & Water",
     "Sodium Hypochlorite 1% + Phenyl",
-    "Dettol Disinfectant"
+    "Inspection / No Infestation",
+    "Antibacterial Sanitizer & Aprons",
+    "Hairnets & Protective Wear Verified",
+    "Air Curtains & Mesh Screens Intact",
+    "Designated Locked Storage / MSDS"
   ],
   method: [
     "Sweeping & Wet Mopping",
+    "Sweeping, Scrubbing & Mopping",
+    "Sweeping, Vacuuming & Wiping",
     "Wiping & Surface Sanitization",
-    "Dry Wiping & Food-Safe Sanitizer",
     "Precision Dry Wipe & Sanitization",
     "Hot Detergent Wash, Rinse & Drying",
     "Dusting & Surface Wiping",
-    "Deep Scrubbing, Disinfection & Mop"
+    "Dry Wiping & Food-Safe Sanitizer",
+    "Dry Sweeping & Microfiber Wiping",
+    "Emptying, Detergent Wash & Disinfect",
+    "Scrubbing, Sanitizing & Soap Refill",
+    "Deep Scrubbing, Disinfection & Mop",
+    "Visual Inspection of Traps & Stations",
+    "Personal Hygiene & Attire Audit",
+    "PPE & Hairnet Compliance Check",
+    "Visual & Physical Integrity Check",
+    "Chemical Cabinet & Label Inspection"
   ],
   time: [
     "08:30 AM", "08:45 AM", "09:00 AM", "09:15 AM", "09:30 AM",
-    "09:45 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM"
+    "09:45 AM", "10:00 AM", "10:15 AM", "10:30 AM", "10:45 AM",
+    "11:00 AM", "11:15 AM", "11:30 AM", "11:45 AM",
+    "12:00 PM", "12:15 PM", "12:30 PM", "12:45 PM"
   ],
   cleanedBy: [
     "Pratap", "Mahesh"
@@ -706,6 +760,13 @@ function initHistoryFilters() {
     <option value="10">October</option>
     <option value="9">September</option>
     <option value="8">August</option>
+    <option value="7">July</option>
+    <option value="6">June</option>
+    <option value="5">May</option>
+    <option value="4">April</option>
+    <option value="3">March</option>
+    <option value="2">February</option>
+    <option value="1">January</option>
     <option value="11">November</option>
     <option value="12">December</option>
   `;
@@ -806,10 +867,14 @@ window.closeExportModal = function() {
 };
 
 window.exportMonthExcel = function() {
-  exportReport('october');
+  const mSel = document.getElementById('history-month-sel');
+  const ySel = document.getElementById('history-year-sel');
+  const monthVal = mSel ? mSel.value : '10';
+  const yearVal = ySel ? ySel.value : '2026';
+  exportReport('monthly', { year: yearVal, month: monthVal });
 };
 
-window.exportReport = async function(type) {
+window.exportReport = async function(type, meta = {}) {
   if (typeof XLSX === 'undefined') {
     alert("Excel generator library is loading, please try in 3 seconds.");
     return;
@@ -839,14 +904,16 @@ window.exportReport = async function(type) {
 
     recordsToExport = weekDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
     fileName = `LV_Spices_Cleaning_Weekly_Report_${currentDate}.xlsx`;
-  } else if (type === 'october') {
-    // Complete October 2026
-    const octDates = [];
-    for (let d = 1; d <= 31; d++) {
-      octDates.push(`2026-10-${String(d).padStart(2, '0')}`);
+  } else if (type === 'monthly' || type === 'october') {
+    const y = meta.year || '2026';
+    const m = meta.month ? String(meta.month).padStart(2, '0') : '10';
+    const totalDays = new Date(parseInt(y), parseInt(m), 0).getDate();
+    const monthDates = [];
+    for (let d = 1; d <= totalDays; d++) {
+      monthDates.push(`${y}-${m}-${String(d).padStart(2, '0')}`);
     }
-    recordsToExport = octDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
-    fileName = `LV_Spices_Cleaning_Register_October_2026.xlsx`;
+    recordsToExport = monthDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
+    fileName = `LV_Spices_Cleaning_Register_${getMonthName(parseInt(m))}_${y}.xlsx`;
   } else if (type === 'all') {
     const allKeys = Object.keys(allRecordsCache).sort();
     recordsToExport = allKeys.map(k => allRecordsCache[k]);
@@ -983,8 +1050,8 @@ window.closeSidebar = function() {
 // INITIALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  // 1. Pre-generate October 2026 data
-  pregenerateOctober2026Data();
+  // 1. Pre-generate historical data (April - October 2026)
+  pregenerateHistoricalData();
 
   // 2. Load today's record (defaulting to current date or October if desired)
   const initialDate = "2026-10-18";
