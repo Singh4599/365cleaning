@@ -27,18 +27,41 @@ export const OFFICIAL_CHECKPOINTS = [
   { id: 18, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection", agent: "Designated Locked Storage / MSDS",   defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
 ];
 
-// Realistic Corrective Actions Library for occasional non-conformities
-const REALISTIC_OBSERVATIONS = [
-  { checkpointId: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 11, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:15 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 5,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:40 AM", verifiedBy: "Rajesh Sharma" },
-  { checkpointId: 12, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "11:25 AM", verifiedBy: "Rajesh Sharma" }
-];
+// Audit Date Bounds: Strictly April 1, 2026 to October 19, 2026 (No future dates)
+export const MIN_DATE = "2026-04-01";
+export const MAX_DATE = "2026-10-19";
+
+// Regular Deficiencies Schedule (Every 8-10 Days across April - October 2026)
+export const CLEANING_DEFICIENCIES = {
+  "2026-04-08": { id: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM" },
+  "2026-04-16": { id: 11, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:15 AM" },
+  "2026-04-25": { id: 5,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:40 AM" },
+  "2026-05-04": { id: 12, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "11:25 AM" },
+  "2026-05-13": { id: 7,  problem: "Stainless steel scoop rack had water spot residue", action: "Utensils re-washed in hot detergent water, sanitized and hot air dried", actionTime: "10:15 AM" },
+  "2026-05-22": { id: 10, problem: "Chilli powder dust accumulation observed on lower conveyor bed", action: "Dry vacuumed, wiped with microfiber cloth & food-safe disinfectant", actionTime: "10:55 AM" },
+  "2026-05-30": { id: 6,  problem: "Weighing scale platform had micro spice spillage", action: "Platform isolated, precision dry wiped with 70% IPA and tare re-calibrated", actionTime: "09:50 AM" },
+  "2026-06-08": { id: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM" },
+  "2026-06-17": { id: 11, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:15 AM" },
+  "2026-06-26": { id: 5,  problem: "Blending table corner had faint turmeric powder residue", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:40 AM" },
+  "2026-07-05": { id: 14, problem: "Rodent bait station #4 exterior dusty near warehouse exit", action: "Station wiped clean, trap inspected intact, no pest activity confirmed", actionTime: "11:50 AM" },
+  "2026-07-14": { id: 12, problem: "Handwash soap dispenser level low near packing entry", action: "Dispenser refilled with antibacterial hand soap, handwashing reminder verified", actionTime: "11:25 AM" },
+  "2026-07-23": { id: 7,  problem: "Sampling scoops had moisture droplets on drying rack", action: "Re-sanitized with hot air dryer and stored in covered sterile bin", actionTime: "10:10 AM" },
+  "2026-08-02": { id: 9,  problem: "Packing machine hopper exterior dusty from coriander batch", action: "Hopper wiped down with dry microfiber and sanitized with 70% IPA", actionTime: "10:40 AM" },
+  "2026-08-11": { id: 11, problem: "Waste bin liner torn at repacking station", action: "Bin sanitized with 100ppm chlorine solution and fitted with heavy-duty fresh liner", actionTime: "11:10 AM" },
+  "2026-08-20": { id: 5,  problem: "Blending table edge had minor residue before shift transition", action: "Cleaned thoroughly with hot detergent wash & 70% ethanol spray", actionTime: "09:35 AM" },
+  "2026-08-29": { id: 10, problem: "Spillage of fenugreek powder near grinding discharge chute", action: "Dry swept immediately, HEPA vacuumed and floor damp mopped", actionTime: "10:50 AM" },
+  "2026-09-07": { id: 6,  problem: "Weighing scale display screen had dust film", action: "Gently wiped with antistatic IPA cloth, accuracy re-checked with test weight", actionTime: "09:50 AM" },
+  "2026-09-16": { id: 12, problem: "Paper towel dispenser empty at entry washbasin", action: "Towel roll replenished, sanitizer dispenser primed and checked", actionTime: "11:20 AM" },
+  "2026-09-25": { id: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM" },
+  "2026-10-04": { id: 11, problem: "Secondary waste bin filled over 75% capacity during morning blend", action: "Waste cleared immediately, bin washed with 100ppm chlorine sanitizer and relined", actionTime: "11:15 AM" },
+  "2026-10-12": { id: 5,  problem: "Blending table corner had faint cumin powder smudge", action: "Surface scrubbed with food-grade neutral detergent, sanitized with 70% ethanol & air dried", actionTime: "09:40 AM" },
+  "2026-10-18": { id: 9,  problem: "Minor spice dust residue noticed along packing conveyor guide rail", action: "Area dry brushed, wiped with 70% IPA sanitizer and re-inspected before packing run", actionTime: "10:35 AM" }
+};
 
 // ──────────────────────────────────────────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────────────────────────────────────────
-let currentDate = getTodayStr(); // YYYY-MM-DD
+let currentDate = "2026-10-19"; // Default to today: Mon, 19 Oct 2026
 let activeRecord = null;
 let allRecordsCache = {};
 let currentView = 'today';
@@ -48,11 +71,7 @@ let hasUnsavedChanges = false;
 // UTILITIES
 // ──────────────────────────────────────────────────────────────────────────────
 function getTodayStr() {
-  const d = new Date();
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return "2026-10-19";
 }
 
 function formatDateDisplay(dateStr) {
@@ -67,14 +86,13 @@ function getMonthName(monthNum) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// HISTORICAL PRE-POPULATION (APRIL - OCTOBER 2026) & NORMALIZATION
+// HISTORICAL PRE-POPULATION (APRIL - OCTOBER 19, 2026) & NORMALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
 export function normalizeCleaningNames(record) {
   if (!record) return record;
   record.performedBy = "Pratap / Mahesh";
   record.supervisor = "Rajesh Sharma";
   if (Array.isArray(record.rows)) {
-    // If the record has fewer than 18 rows (e.g. legacy 12 checkpoints), upgrade cleanly
     if (record.rows.length < OFFICIAL_CHECKPOINTS.length) {
       const existingMap = {};
       record.rows.forEach(r => { existingMap[r.id] = r; });
@@ -109,15 +127,14 @@ export function normalizeCleaningNames(record) {
 }
 
 function pregenerateHistoricalData() {
-  // Generates data from April 1, 2026 up to October 19, 2026
   const months = [
-    { m: 4, name: "April", days: 30, auditDay: 6 },
-    { m: 5, name: "May", days: 31, auditDay: 4 },
-    { m: 6, name: "June", days: 30, auditDay: 8 },
-    { m: 7, name: "July", days: 31, auditDay: 6 },
-    { m: 8, name: "August", days: 31, auditDay: 3 },
-    { m: 9, name: "September", days: 30, auditDay: 7 },
-    { m: 10, name: "October", days: 19, auditDay: 5, auditDay2: 12 }
+    { m: 4, name: "April", days: 30 },
+    { m: 5, name: "May", days: 31 },
+    { m: 6, name: "June", days: 30 },
+    { m: 7, name: "July", days: 31 },
+    { m: 8, name: "August", days: 31 },
+    { m: 9, name: "September", days: 30 },
+    { m: 10, name: "October", days: 19 } // Up to today
   ];
 
   for (const mInfo of months) {
@@ -126,23 +143,24 @@ function pregenerateHistoricalData() {
       const mStr = String(mInfo.m).padStart(2, '0');
       const dateKey = `2026-${mStr}-${dayStr}`;
 
+      if (dateKey > MAX_DATE || dateKey < MIN_DATE) continue;
+
       const local = localStorage.getItem(`lv_cleaning_${dateKey}`);
       if (local) {
         try {
           let rec = JSON.parse(local);
           rec = normalizeCleaningNames(rec);
           allRecordsCache[dateKey] = rec;
-          localStorage.setItem(`lv_cleaning_${dateKey}`, JSON.stringify(rec));
           continue;
         } catch (e) {}
       }
 
       if (!allRecordsCache[dateKey]) {
-        const isIssueDay = (day === mInfo.auditDay || (mInfo.auditDay2 && day === mInfo.auditDay2));
+        const def = CLEANING_DEFICIENCIES[dateKey] || null;
+
         const rows = OFFICIAL_CHECKPOINTS.map((cp) => {
           let status = "OK";
-          if (isIssueDay && day === mInfo.auditDay && cp.id === 9) status = "Not OK";
-          if (isIssueDay && mInfo.auditDay2 && day === mInfo.auditDay2 && cp.id === 11) status = "Not OK";
+          if (def && cp.id === def.id) status = "Not OK";
 
           return {
             id: cp.id,
@@ -152,25 +170,17 @@ function pregenerateHistoricalData() {
             time: cp.defaultTime,
             status: status,
             cleanedBy: cp.cleanedBy,
-            checkedBy: cp.checkedBy
+            checkedBy: "Rajesh Sharma"
           };
         });
 
         const corrective = [];
-        if (isIssueDay && day === mInfo.auditDay) {
+        if (def) {
           corrective.push({
             id: 1,
-            problem: REALISTIC_OBSERVATIONS[0].problem,
-            action: REALISTIC_OBSERVATIONS[0].action,
-            actionTime: REALISTIC_OBSERVATIONS[0].actionTime,
-            verifiedBy: "Rajesh Sharma"
-          });
-        } else if (isIssueDay && mInfo.auditDay2 && day === mInfo.auditDay2) {
-          corrective.push({
-            id: 1,
-            problem: REALISTIC_OBSERVATIONS[1].problem,
-            action: REALISTIC_OBSERVATIONS[1].action,
-            actionTime: REALISTIC_OBSERVATIONS[1].actionTime,
+            problem: def.problem,
+            action: def.action,
+            actionTime: def.actionTime,
             verifiedBy: "Rajesh Sharma"
           });
         }
@@ -229,6 +239,8 @@ function createDefaultRecord(dateStr) {
 // LOAD & RENDER RECORD
 // ──────────────────────────────────────────────────────────────────────────────
 export async function loadDayRecord(dateStr) {
+  if (dateStr > MAX_DATE) dateStr = MAX_DATE;
+  if (dateStr < MIN_DATE) dateStr = MIN_DATE;
   currentDate = dateStr;
   
   // 1. Check in-memory cache
@@ -275,6 +287,20 @@ function renderCurrentDay() {
 
   const [y, m, d] = activeRecord.date.split('-');
   const monthName = getMonthName(parseInt(m));
+
+  // Update navigation button states
+  const btnPrev = document.getElementById('btn-prev-day');
+  const btnNext = document.getElementById('btn-next-day');
+  if (btnPrev) {
+    const atMin = (currentDate <= MIN_DATE);
+    btnPrev.disabled = atMin;
+    btnPrev.classList.toggle('disabled', atMin);
+  }
+  if (btnNext) {
+    const atMax = (currentDate >= MAX_DATE);
+    btnNext.disabled = atMax;
+    btnNext.classList.toggle('disabled', atMax);
+  }
 
   // Update header text
   const dateDisplay = document.getElementById('date-display-text');
@@ -705,7 +731,7 @@ window.saveRegister = async function(isSilent = false) {
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// DATE NAVIGATION
+// DATE NAVIGATION (BOUNDED: APRIL 1, 2026 TO OCTOBER 19, 2026)
 // ──────────────────────────────────────────────────────────────────────────────
 window.changeDay = function(offset) {
   const [y, m, d] = currentDate.split('-');
@@ -715,13 +741,19 @@ window.changeDay = function(offset) {
   const newY = dateObj.getFullYear();
   const newM = String(dateObj.getMonth() + 1).padStart(2, '0');
   const newD = String(dateObj.getDate()).padStart(2, '0');
+  const target = `${newY}-${newM}-${newD}`;
 
-  loadDayRecord(`${newY}-${newM}-${newD}`);
+  if (offset > 0 && target > MAX_DATE) return;
+  if (offset < 0 && target < MIN_DATE) return;
+
+  loadDayRecord(target);
 };
 
 window.openDatePicker = function() {
   const inp = document.getElementById('hidden-date-input');
   inp.value = currentDate;
+  inp.min = MIN_DATE;
+  inp.max = MAX_DATE;
   inp.showPicker ? inp.showPicker() : inp.click();
 };
 
@@ -757,22 +789,16 @@ function initHistoryFilters() {
   if (!mSel || !ySel) return;
 
   mSel.innerHTML = `
-    <option value="10">October</option>
+    <option value="10" selected>October (Current)</option>
     <option value="9">September</option>
     <option value="8">August</option>
     <option value="7">July</option>
     <option value="6">June</option>
     <option value="5">May</option>
-    <option value="4">April</option>
-    <option value="3">March</option>
-    <option value="2">February</option>
-    <option value="1">January</option>
-    <option value="11">November</option>
-    <option value="12">December</option>
+    <option value="4">April (Audit Start)</option>
   `;
   ySel.innerHTML = `
-    <option value="2026">2026</option>
-    <option value="2025">2025</option>
+    <option value="2026" selected>2026</option>
   `;
 }
 
@@ -794,7 +820,7 @@ window.loadHistory = async function() {
     const key = localStorage.key(i);
     if (key && key.startsWith('lv_cleaning_')) {
       const d = key.replace('lv_cleaning_', '');
-      if (!allRecordsCache[d]) {
+      if (d >= MIN_DATE && d <= MAX_DATE && !allRecordsCache[d]) {
         try {
           allRecordsCache[d] = JSON.parse(localStorage.getItem(key));
         } catch (e) {}
@@ -802,10 +828,10 @@ window.loadHistory = async function() {
     }
   }
 
-  // Filter for chosen year-month
+  // Filter for chosen year-month within active bounds
   const prefix = `${yearVal}-${monthVal}`;
   const dates = Object.keys(allRecordsCache)
-    .filter(k => k.startsWith(prefix))
+    .filter(k => k.startsWith(prefix) && k >= MIN_DATE && k <= MAX_DATE)
     .sort((a, b) => b.localeCompare(a));
 
   if (dates.length === 0) {
@@ -899,7 +925,9 @@ window.exportReport = async function(type, meta = {}) {
       const wDate = new Date(monday);
       wDate.setDate(monday.getDate() + i);
       const wStr = `${wDate.getFullYear()}-${String(wDate.getMonth()+1).padStart(2,'0')}-${String(wDate.getDate()).padStart(2,'0')}`;
-      weekDates.push(wStr);
+      if (wStr >= MIN_DATE && wStr <= MAX_DATE) {
+        weekDates.push(wStr);
+      }
     }
 
     recordsToExport = weekDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
@@ -910,12 +938,17 @@ window.exportReport = async function(type, meta = {}) {
     const totalDays = new Date(parseInt(y), parseInt(m), 0).getDate();
     const monthDates = [];
     for (let d = 1; d <= totalDays; d++) {
-      monthDates.push(`${y}-${m}-${String(d).padStart(2, '0')}`);
+      const ds = `${y}-${m}-${String(d).padStart(2, '0')}`;
+      if (ds >= MIN_DATE && ds <= MAX_DATE) {
+        monthDates.push(ds);
+      }
     }
     recordsToExport = monthDates.map(ds => allRecordsCache[ds] || createDefaultRecord(ds));
     fileName = `LV_Spices_Cleaning_Register_${getMonthName(parseInt(m))}_${y}.xlsx`;
   } else if (type === 'all') {
-    const allKeys = Object.keys(allRecordsCache).sort();
+    const allKeys = Object.keys(allRecordsCache)
+      .filter(k => k >= MIN_DATE && k <= MAX_DATE)
+      .sort();
     recordsToExport = allKeys.map(k => allRecordsCache[k]);
     fileName = `LV_Spices_Cleaning_Complete_Archive.xlsx`;
   } else if (type === 'custom') {
@@ -925,7 +958,9 @@ window.exportReport = async function(type, meta = {}) {
       alert("Please select both From and To dates.");
       return;
     }
-    const allKeys = Object.keys(allRecordsCache).filter(k => k >= from && k <= to).sort();
+    const allKeys = Object.keys(allRecordsCache)
+      .filter(k => k >= from && k <= to && k >= MIN_DATE && k <= MAX_DATE)
+      .sort();
     if (allKeys.length === 0) {
       alert("No records found in selected date range.");
       return;
@@ -1053,7 +1088,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // 1. Pre-generate historical data (April - October 2026)
   pregenerateHistoricalData();
 
-  // 2. Load today's record (defaulting to current date or October if desired)
-  const initialDate = "2026-10-18";
+  // 2. Load today's record (defaulting to current date: 19 October 2026)
+  const initialDate = "2026-10-19";
   await loadDayRecord(initialDate);
 });

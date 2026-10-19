@@ -235,6 +235,13 @@ body {
   color: var(--brand-primary);
   transform: translateY(-1px);
 }
+.date-nav-btn:disabled,
+.date-nav-btn.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+}
 .date-display-pill {
   display: flex; align-items: center; gap: 8px;
   padding: 7px 16px;
