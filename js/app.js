@@ -29,7 +29,7 @@ export const OFFICIAL_CHECKPOINTS = [
 
 // Audit Date Bounds: Strictly April 1, 2026 to October 19, 2026 (No future dates)
 export const MIN_DATE = "2026-04-01";
-export const MAX_DATE = "2026-10-19";
+export const MAX_DATE = new Date().toISOString().split('T')[0]; // Always today
 
 // Regular Deficiencies Schedule (Every 8-10 Days across April - October 2026)
 export const CLEANING_DEFICIENCIES = {
@@ -61,7 +61,7 @@ export const CLEANING_DEFICIENCIES = {
 // ──────────────────────────────────────────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────────────────────────────────────────
-let currentDate = "2026-10-19"; // Default to today: Mon, 19 Oct 2026
+let currentDate = new Date().toISOString().split('T')[0]; // Always today
 let activeRecord = null;
 let allRecordsCache = {};
 let currentView = 'today';
@@ -71,7 +71,8 @@ let hasUnsavedChanges = false;
 // UTILITIES
 // ──────────────────────────────────────────────────────────────────────────────
 function getTodayStr() {
-  return "2026-10-19";
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
 function formatDateDisplay(dateStr) {
@@ -134,7 +135,10 @@ function pregenerateHistoricalData() {
     { m: 7, name: "July", days: 31 },
     { m: 8, name: "August", days: 31 },
     { m: 9, name: "September", days: 30 },
-    { m: 10, name: "October", days: 19 } // Up to today
+    { m: 10, name: "October", days: 31 },
+    { m: 11, name: "November", days: 30 },
+    { m: 12, name: "December", days: 31 }
+    // Dynamic cap handled by MAX_DATE check above
   ];
 
   for (const mInfo of months) {
