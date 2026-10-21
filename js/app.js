@@ -7,24 +7,26 @@ import { saveRecordToCloud, loadRecordFromCloud, loadAllRecordsFromCloud, update
 // CHECKPOINTS (18 items matching exact plant sanitation schedule)
 // ──────────────────────────────────────────────────────────────────────────────
 export const OFFICIAL_CHECKPOINTS = [
-  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner / Disinfectant", defaultTime: "08:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",              agent: "Lizol Floor Cleaner",                defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",       agent: "Floor Disinfectant Solution",        defaultTime: "09:00 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 4,  area: "Repacking Area Cleaning",                method: "Sweeping, Vacuuming & Wiping",        agent: "Food-Safe Disinfectant Solution",    defaultTime: "09:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",       agent: "Ethanol 70% Food Contact Sanitizer", defaultTime: "09:30 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",   agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "09:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",       method: "Hot Detergent Wash, Rinse & Drying",  agent: "Food Grade Neutral Detergent",       defaultTime: "10:00 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 8,  area: "Storage Racks & Pallets Cleaning",       method: "Dusting & Surface Wiping",            agent: "Neutral Sanitizer Solution",         defaultTime: "10:15 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 9,  area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",    agent: "Isopropyl Alcohol (IPA) 70%",        defaultTime: "10:30 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 10, area: "Dust & Spillage Removal",                method: "Dry Sweeping & Microfiber Wiping",    agent: "Food Grade Sanitizer / Dry Vacuum",  defaultTime: "10:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 11, area: "Waste Bins Cleaning & Waste Disposal",   method: "Emptying, Detergent Wash & Disinfect",agent: "Chlorine 100ppm Solution",           defaultTime: "11:00 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 12, area: "Handwashing Facilities & Soap Available", method: "Scrubbing, Sanitizing & Soap Refill", agent: "Antibacterial Soap & Water",        defaultTime: "11:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 13, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",  agent: "Sodium Hypochlorite 1% + Phenyl",    defaultTime: "11:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 14, area: "Pest Activity / Rodent Droppings Check", method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",      defaultTime: "11:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 15, area: "Staff Hand Hygiene & Clean Clothing",    method: "Personal Hygiene & Attire Audit",     agent: "Antibacterial Sanitizer & Aprons",   defaultTime: "12:00 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 16, area: "Hair Cover / Protective Clothing Check", method: "PPE & Hairnet Compliance Check",      agent: "Hairnets & Protective Wear Verified",defaultTime: "12:15 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 17, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",   agent: "Air Curtains & Mesh Screens Intact", defaultTime: "12:30 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 18, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection", agent: "Designated Locked Storage / MSDS",   defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
+  // ── MORNING BATCH: Start of day, before production begins ──
+  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner / Disinfectant",   defaultTime: "08:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner",                   defaultTime: "08:52 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",        agent: "Floor Disinfectant Solution",           defaultTime: "09:10 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 4,  area: "Repacking Area Cleaning",                method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Food-Safe Disinfectant Solution",       defaultTime: "09:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",        agent: "Ethanol 70% Food Contact Sanitizer",   defaultTime: "09:48 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",    agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "10:05 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  // ── MID-MORNING: After first production run ──
+  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",     method: "Hot Detergent Wash, Rinse & Drying",   agent: "Food Grade Neutral Detergent",          defaultTime: "10:40 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 8,  area: "Waste Bins Cleaning & Waste Disposal",  method: "Emptying, Detergent Wash & Disinfect", agent: "Chlorine 100ppm Solution",              defaultTime: "11:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 9,  area: "Handwashing Facilities & Soap Check",   method: "Scrubbing, Sanitizing & Soap Refill",  agent: "Antibacterial Soap & Water",           defaultTime: "11:40 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  // ── PRE-LUNCH: Before lunch break (12:30–01:00) ──
+  { id: 10, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",   agent: "Sodium Hypochlorite 1% + Phenyl",       defaultTime: "12:20 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 11, area: "Pest Activity / Rodent Check",           method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",          defaultTime: "12:50 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  // ── POST-LUNCH: After production resumes ──
+  { id: 12, area: "Staff Hand Hygiene & Attire Check",      method: "Personal Hygiene & Attire Audit",      agent: "Antibacterial Sanitizer & Aprons",      defaultTime: "01:35 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 13, area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "03:10 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  // ── END OF DAY: Before close ──
+  { id: 14, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",    agent: "Air Curtains & Mesh Screens Intact",    defaultTime: "05:30 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 15, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection",  agent: "Designated Locked Storage / MSDS",      defaultTime: "06:10 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
 ];
 
 // Audit Date Bounds: Strictly April 1, 2026 to October 19, 2026 (No future dates)
