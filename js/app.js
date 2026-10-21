@@ -6,32 +6,41 @@ import { saveRecordToCloud, loadRecordFromCloud, loadAllRecordsFromCloud, update
 // ──────────────────────────────────────────────────────────────────────────────
 // CHECKPOINTS (18 items matching exact plant sanitation schedule)
 // ──────────────────────────────────────────────────────────────────────────────
+// UTILITIES (Date helper defined early for constants)
+// ──────────────────────────────────────────────────────────────────────────────
+export function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// CHECKPOINTS (15 items grouped into 4 logical audit rounds: 08:45, 12:45, 03:45, 06:15)
+// ──────────────────────────────────────────────────────────────────────────────
 export const OFFICIAL_CHECKPOINTS = [
-  // ── MORNING BATCH: Start of day, before production begins ──
-  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner / Disinfectant",   defaultTime: "08:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner",                   defaultTime: "08:52 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",        agent: "Floor Disinfectant Solution",           defaultTime: "09:10 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 4,  area: "Repacking Area Cleaning",                method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Food-Safe Disinfectant Solution",       defaultTime: "09:30 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",        agent: "Ethanol 70% Food Contact Sanitizer",   defaultTime: "09:48 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",    agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "10:05 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  // ── MID-MORNING: After first production run ──
-  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",     method: "Hot Detergent Wash, Rinse & Drying",   agent: "Food Grade Neutral Detergent",          defaultTime: "10:40 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 8,  area: "Waste Bins Cleaning & Waste Disposal",  method: "Emptying, Detergent Wash & Disinfect", agent: "Chlorine 100ppm Solution",              defaultTime: "11:15 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 9,  area: "Handwashing Facilities & Soap Check",   method: "Scrubbing, Sanitizing & Soap Refill",  agent: "Antibacterial Soap & Water",           defaultTime: "11:40 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  // ── PRE-LUNCH: Before lunch break (12:30–01:00) ──
-  { id: 10, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",   agent: "Sodium Hypochlorite 1% + Phenyl",       defaultTime: "12:20 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 11, area: "Pest Activity / Rodent Check",           method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",          defaultTime: "12:50 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  // ── POST-LUNCH: After production resumes ──
-  { id: 12, area: "Staff Hand Hygiene & Attire Check",      method: "Personal Hygiene & Attire Audit",      agent: "Antibacterial Sanitizer & Aprons",      defaultTime: "01:35 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 13, area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "03:10 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  // ── END OF DAY: Before close ──
-  { id: 14, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",    agent: "Air Curtains & Mesh Screens Intact",    defaultTime: "05:30 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 15, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection",  agent: "Designated Locked Storage / MSDS",      defaultTime: "06:10 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
+  // ── 08:45 BATCH — Morning Startup & Production Prep (5 Activities) ──
+  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner / Disinfectant",   defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner",                   defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",        agent: "Floor Disinfectant Solution",           defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 4,  area: "Repacking Area Cleaning",                method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Food-Safe Disinfectant Solution",       defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",        agent: "Ethanol 70% Food Contact Sanitizer",   defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  // ── 12:45 BATCH — Pre-Lunch Round & Utensil Sanitization (5 Activities) ──
+  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",    agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",     method: "Hot Detergent Wash, Rinse & Drying",   agent: "Food Grade Neutral Detergent",          defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 8,  area: "Waste Bins Cleaning & Waste Disposal",  method: "Emptying, Detergent Wash & Disinfect", agent: "Chlorine 100ppm Solution",              defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 9,  area: "Handwashing Facilities & Soap Check",   method: "Scrubbing, Sanitizing & Soap Refill",  agent: "Antibacterial Soap & Water",           defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 10, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",   agent: "Sodium Hypochlorite 1% + Phenyl",       defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  // ── 03:45 BATCH — Afternoon Production & Hygiene Round (3 Activities) ──
+  { id: 11, area: "Pest Activity / Rodent Check",           method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",          defaultTime: "03:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 12, area: "Staff Hand Hygiene & Attire Check",      method: "Personal Hygiene & Attire Audit",      agent: "Antibacterial Sanitizer & Aprons",      defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 13, area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  // ── 06:15 BATCH — End of Day Close-Down (2 Activities) ──
+  { id: 14, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",    agent: "Air Curtains & Mesh Screens Intact",    defaultTime: "06:15 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 15, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection",  agent: "Designated Locked Storage / MSDS",      defaultTime: "06:15 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
 ];
 
-// Audit Date Bounds: Strictly April 1, 2026 to October 19, 2026 (No future dates)
+// Audit Date Bounds: Strictly April 1, 2026 to dynamic current day
 export const MIN_DATE = "2026-04-01";
-export const MAX_DATE = new Date().toISOString().split('T')[0]; // Always today
+export const MAX_DATE = getTodayStr();
 
 // Regular Deficiencies Schedule (Every 8-10 Days across April - October 2026)
 export const CLEANING_DEFICIENCIES = {
@@ -63,20 +72,15 @@ export const CLEANING_DEFICIENCIES = {
 // ──────────────────────────────────────────────────────────────────────────────
 // STATE
 // ──────────────────────────────────────────────────────────────────────────────
-let currentDate = new Date().toISOString().split('T')[0]; // Always today
+let currentDate = getTodayStr();
 let activeRecord = null;
 let allRecordsCache = {};
 let currentView = 'today';
 let hasUnsavedChanges = false;
 
 // ──────────────────────────────────────────────────────────────────────────────
-// UTILITIES
+// UTILITIES (Formatting)
 // ──────────────────────────────────────────────────────────────────────────────
-function getTodayStr() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
 function formatDateDisplay(dateStr) {
   const [y, m, d] = dateStr.split('-');
   const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
@@ -89,37 +93,28 @@ function getMonthName(monthNum) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// HISTORICAL PRE-POPULATION (APRIL - OCTOBER 19, 2026) & NORMALIZATION
+// HISTORICAL PRE-POPULATION (APRIL - TODAY) & NORMALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
 export function normalizeCleaningNames(record) {
   if (!record) return record;
   record.performedBy = "Pratap / Mahesh";
   record.supervisor = "Rajesh Sharma";
   if (Array.isArray(record.rows)) {
-    if (record.rows.length < OFFICIAL_CHECKPOINTS.length) {
-      const existingMap = {};
-      record.rows.forEach(r => { existingMap[r.id] = r; });
-      record.rows = OFFICIAL_CHECKPOINTS.map(cp => {
-        const ex = existingMap[cp.id];
-        return {
-          id: cp.id,
-          area: cp.area,
-          method: ex?.method || cp.method,
-          agent: ex?.agent || cp.agent,
-          time: ex?.time || cp.defaultTime,
-          status: ex?.status || "OK",
-          cleanedBy: ex?.cleanedBy || cp.cleanedBy,
-          checkedBy: "Rajesh Sharma"
-        };
-      });
-    } else {
-      record.rows.forEach((r, idx) => {
-        if (r.cleanedBy !== 'Pratap' && r.cleanedBy !== 'Mahesh') {
-          r.cleanedBy = (idx % 2 === 0) ? 'Pratap' : 'Mahesh';
-        }
-        r.checkedBy = 'Rajesh Sharma';
-      });
-    }
+    const existingMap = {};
+    record.rows.forEach(r => { existingMap[r.id] = r; });
+    record.rows = OFFICIAL_CHECKPOINTS.map(cp => {
+      const ex = existingMap[cp.id];
+      return {
+        id: cp.id,
+        area: cp.area,
+        method: ex?.method || cp.method,
+        agent: ex?.agent || cp.agent,
+        time: cp.defaultTime,
+        status: ex?.status || "OK",
+        cleanedBy: ex?.cleanedBy || cp.cleanedBy,
+        checkedBy: "Rajesh Sharma"
+      };
+    });
   }
   if (Array.isArray(record.corrective)) {
     record.corrective.forEach(c => {
@@ -1094,7 +1089,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // 1. Pre-generate historical data (April - October 2026)
   pregenerateHistoricalData();
 
-  // 2. Load today's record (defaulting to current date: 19 October 2026)
-  const initialDate = "2026-10-19";
+  // 2. Load today's record (dynamic current date)
+  const initialDate = getTodayStr();
   await loadDayRecord(initialDate);
 });
