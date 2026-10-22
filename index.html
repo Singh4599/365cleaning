@@ -11,7 +11,7 @@
   <!-- SheetJS for Excel Exports -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link rel="icon" type="image/jpeg" href="assets/lv_spices_logo.jpg" />
-  <link rel="stylesheet" href="css/app.css?v=2.8.0" />
+  <link rel="stylesheet" href="css/app.css?v=2.9.0" />
 </head>
 <body>
 
@@ -74,6 +74,15 @@
         </div>
       </div>
       <div class="topbar-right">
+        <!-- Unit 11 / Unit 12 Switcher -->
+        <div class="unit-tab-group">
+          <button class="unit-tab-btn active" data-unit="unit11" onclick="switchUnit('unit11')">
+            <span class="unit-dot"></span> Unit 11
+          </button>
+          <button class="unit-tab-btn" data-unit="unit12" onclick="switchUnit('unit12')">
+            <span class="unit-dot"></span> Unit 12
+          </button>
+        </div>
         <div class="cloud-badge connected" id="cloud-status-badge">
           <span class="cloud-dot" id="cloud-status-dot"></span>
           <span id="cloud-status-text">Cloud Synced</span>
@@ -121,6 +130,10 @@
           <div class="osh-field">
             <span class="osh-label">Shift:</span>
             <span class="osh-val" id="header-shift">General Shift</span>
+          </div>
+          <div class="osh-field">
+            <span class="osh-label">Unit:</span>
+            <span class="osh-val unit-badge-pill" id="header-unit-badge" data-unit="unit11">Unit 11</span>
           </div>
         </div>
       </div>

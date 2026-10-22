@@ -77,6 +77,7 @@ let activeRecord = null;
 let allRecordsCache = {};
 let currentView = 'today';
 let hasUnsavedChanges = false;
+let currentUnit = 'unit11'; // 'unit11' or 'unit12'
 
 // ──────────────────────────────────────────────────────────────────────────────
 // UTILITIES (Formatting)
@@ -1083,13 +1084,59 @@ window.closeSidebar = function() {
 };
 
 // ──────────────────────────────────────────────────────────────────────────────
+// UNIT 11 / UNIT 12 SWITCHER
+// ──────────────────────────────────────────────────────────────────────────────
+window.switchUnit = function(unit, force) {
+  if (currentUnit === unit && !force) {
+    // Still sync DOM in case it's a fresh page load
+    _applyUnitToDOM(unit);
+    return;
+  }
+  currentUnit = unit;
+  _applyUnitToDOM(unit);
+  localStorage.setItem('lv_cleaning_active_unit', unit);
+};
+
+function _applyUnitToDOM(unit) {
+  // Update button active states
+  document.querySelectorAll('.unit-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.unit === unit);
+  });
+
+  // Update the unit badge in the official header
+  const unitBadge = document.getElementById('header-unit-badge');
+  if (unitBadge) {
+    unitBadge.textContent = unit === 'unit11' ? 'Unit 11' : 'Unit 12';
+    unitBadge.dataset.unit = unit;
+  }
+
+  // Update page title to reflect unit
+  const pageTitle = document.getElementById('page-title');
+  if (pageTitle) {
+    const unitLabel = unit === 'unit11' ? 'Unit 11' : 'Unit 12';
+    pageTitle.textContent = `Cleaning & Sanitation Register — ${unitLabel}`;
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // INITIALIZATION
 // ──────────────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   // 1. Pre-generate historical data (April - October 2026)
   pregenerateHistoricalData();
 
-  // 2. Load today's record (dynamic current date)
+  // 2. Restore last active unit from localStorage
+  const savedUnit = localStorage.getItem('lv_cleaning_active_unit');
+  if (savedUnit === 'unit12') {
+    currentUnit = 'unit12';
+    // Sync button states after DOM is ready
+    setTimeout(() => window.switchUnit('unit12'), 0);
+  } else {
+    // Default is unit11 — sync button active states
+    setTimeout(() => window.switchUnit('unit11'), 0);
+  }
+
+  // 3. Load today's record (dynamic current date)
   const initialDate = getTodayStr();
   await loadDayRecord(initialDate);
 });
