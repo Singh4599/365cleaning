@@ -18,24 +18,24 @@ export function getTodayStr() {
 // ──────────────────────────────────────────────────────────────────────────────
 export const OFFICIAL_CHECKPOINTS = [
   // ── 08:45 BATCH — Morning Startup & Production Prep (5 Activities) ──
-  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner / Disinfectant",   defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner",                   defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",        agent: "Floor Disinfectant Solution",           defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 4,  area: "Repacking Area Cleaning",                method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Food-Safe Disinfectant Solution",       defaultTime: "08:45 AM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",        agent: "Ethanol 70% Food Contact Sanitizer",   defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 1,  area: "Shop Floor Cleaning",                    method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner / Disinfectant",   defaultTime: "08:45 AM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 2,  area: "Warehouse Floor Cleaning",               method: "Sweeping & Wet Mopping",               agent: "Lizol Floor Cleaner",                   defaultTime: "08:45 AM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 3,  area: "Manufacturing Area Cleaning",            method: "Sweeping, Scrubbing & Mopping",        agent: "Floor Disinfectant Solution",           defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
+  { id: 4,  area: "Repacking Area Cleaning",                method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Food-Safe Disinfectant Solution",       defaultTime: "08:45 AM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 5,  area: "Blending Table Cleaning",                method: "Wiping & Surface Sanitization",        agent: "Ethanol 70% Food Contact Sanitizer",   defaultTime: "08:45 AM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
   // ── 12:45 BATCH — Pre-Lunch Round & Utensil Sanitization (5 Activities) ──
-  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",    agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",     method: "Hot Detergent Wash, Rinse & Drying",   agent: "Food Grade Neutral Detergent",          defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 8,  area: "Waste Bins Cleaning & Waste Disposal",  method: "Emptying, Detergent Wash & Disinfect", agent: "Chlorine 100ppm Solution",              defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 9,  area: "Handwashing Facilities & Soap Check",   method: "Scrubbing, Sanitizing & Soap Refill",  agent: "Antibacterial Soap & Water",           defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 10, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",   agent: "Sodium Hypochlorite 1% + Phenyl",       defaultTime: "12:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
+  { id: 6,  area: "Weighing Machine Cleaning",              method: "Precision Dry Wipe & Sanitization",    agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
+  { id: 7,  area: "Scoops, Trays & Utensils Cleaning",     method: "Hot Detergent Wash, Rinse & Drying",   agent: "Food Grade Neutral Detergent",          defaultTime: "12:45 PM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
+  { id: 8,  area: "Waste Bins Cleaning & Waste Disposal",  method: "Emptying, Detergent Wash & Disinfect", agent: "Chlorine 100ppm Solution",              defaultTime: "12:45 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 9,  area: "Handwashing Facilities & Soap Check",   method: "Scrubbing, Sanitizing & Soap Refill",  agent: "Antibacterial Soap & Water",           defaultTime: "12:45 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 10, area: "Toilet & Washroom Cleaning",             method: "Deep Scrubbing, Disinfection & Mop",   agent: "Sodium Hypochlorite 1% + Phenyl",       defaultTime: "12:45 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
   // ── 03:45 BATCH — Afternoon Production & Hygiene Round (3 Activities) ──
-  { id: 11, area: "Pest Activity / Rodent Check",           method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",          defaultTime: "03:45 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 12, area: "Staff Hand Hygiene & Attire Check",      method: "Personal Hygiene & Attire Audit",      agent: "Antibacterial Sanitizer & Aprons",      defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
-  { id: 13, area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "Rajesh Sharma" },
+  { id: 11, area: "Pest Activity / Rodent Check",           method: "Visual Inspection of Traps & Stations",agent: "Inspection / No Infestation",          defaultTime: "03:45 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 12, area: "Staff Hand Hygiene & Attire Check",      method: "Personal Hygiene & Attire Audit",      agent: "Antibacterial Sanitizer & Aprons",      defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
+  { id: 13, area: "Packing Machine Cleaning",               method: "Dry Wiping & Food-Safe Sanitizer",     agent: "Isopropyl Alcohol (IPA) 70%",           defaultTime: "03:45 PM", cleanedBy: "Mahesh", checkedBy: "BHIMLAL SHARMA" },
   // ── 06:15 BATCH — End of Day Close-Down (2 Activities) ──
-  { id: 14, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",    agent: "Air Curtains & Mesh Screens Intact",    defaultTime: "06:15 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" },
-  { id: 15, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection",  agent: "Designated Locked Storage / MSDS",      defaultTime: "06:15 PM", cleanedBy: "Pratap", checkedBy: "Rajesh Sharma" }
+  { id: 14, area: "Doors, Windows & Insect Screens Check",  method: "Visual & Physical Integrity Check",    agent: "Air Curtains & Mesh Screens Intact",    defaultTime: "06:15 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" },
+  { id: 15, area: "Cleaning Chemicals Properly Stored",     method: "Chemical Cabinet & Label Inspection",  agent: "Designated Locked Storage / MSDS",      defaultTime: "06:15 PM", cleanedBy: "SANVALDAS", checkedBy: "BHIMLAL SHARMA" }
 ];
 
 // Audit Date Bounds: Strictly April 1, 2026 to dynamic current day
@@ -98,8 +98,8 @@ function getMonthName(monthNum) {
 // ──────────────────────────────────────────────────────────────────────────────
 export function normalizeCleaningNames(record) {
   if (!record) return record;
-  record.performedBy = "Pratap / Mahesh";
-  record.supervisor = "Rajesh Sharma";
+  record.performedBy = "SANVALDAS / Mahesh";
+  record.supervisor = "BHIMLAL SHARMA";
   if (Array.isArray(record.rows)) {
     const existingMap = {};
     record.rows.forEach(r => { existingMap[r.id] = r; });
@@ -113,13 +113,13 @@ export function normalizeCleaningNames(record) {
         time: cp.defaultTime,
         status: ex?.status || "OK",
         cleanedBy: ex?.cleanedBy || cp.cleanedBy,
-        checkedBy: "Rajesh Sharma"
+        checkedBy: "BHIMLAL SHARMA"
       };
     });
   }
   if (Array.isArray(record.corrective)) {
     record.corrective.forEach(c => {
-      c.verifiedBy = 'Rajesh Sharma';
+      c.verifiedBy = 'BHIMLAL SHARMA';
     });
   }
   return record;
@@ -172,7 +172,7 @@ function pregenerateHistoricalData() {
             time: cp.defaultTime,
             status: status,
             cleanedBy: cp.cleanedBy,
-            checkedBy: "Rajesh Sharma"
+            checkedBy: "BHIMLAL SHARMA"
           };
         });
 
@@ -183,7 +183,7 @@ function pregenerateHistoricalData() {
             problem: def.problem,
             action: def.action,
             actionTime: def.actionTime,
-            verifiedBy: "Rajesh Sharma"
+            verifiedBy: "BHIMLAL SHARMA"
           });
         }
 
@@ -194,8 +194,8 @@ function pregenerateHistoricalData() {
           shift: "General Shift",
           rows: rows,
           corrective: corrective,
-          performedBy: "Pratap / Mahesh",
-          supervisor: "Rajesh Sharma",
+          performedBy: "SANVALDAS / Mahesh",
+          supervisor: "BHIMLAL SHARMA",
           savedAt: Date.now()
         };
 
@@ -231,8 +231,8 @@ function createDefaultRecord(dateStr) {
     shift: "General Shift",
     rows: rows,
     corrective: [],
-    performedBy: "Pratap / Mahesh",
-    supervisor: "Rajesh Sharma",
+    performedBy: "SANVALDAS / Mahesh",
+    supervisor: "BHIMLAL SHARMA",
     savedAt: Date.now()
   };
 }
@@ -314,8 +314,8 @@ function renderCurrentDay() {
   document.getElementById('header-year').textContent = y;
   document.getElementById('header-shift').textContent = activeRecord.shift || "General Shift";
 
-  document.getElementById('sign-performed-by').value = activeRecord.performedBy || "Pratap / Mahesh";
-  document.getElementById('sign-supervisor').value = activeRecord.supervisor || "Rajesh Sharma";
+  document.getElementById('sign-performed-by').value = activeRecord.performedBy || "SANVALDAS / Mahesh";
+  document.getElementById('sign-supervisor').value = activeRecord.supervisor || "BHIMLAL SHARMA";
 
   // Render Table 1: Checkpoints
   const tbody = document.getElementById('checklist-body');
@@ -362,7 +362,7 @@ function renderCurrentDay() {
         <td class="editable-cell font-medium" onclick="editCorrCell(${cIdx}, 'problem')">${escapeHtml(c.problem || "—")}</td>
         <td class="editable-cell text-sm" onclick="editCorrCell(${cIdx}, 'action')">${escapeHtml(c.action || "—")}</td>
         <td class="text-center editable-cell text-sm" onclick="editCorrCell(${cIdx}, 'actionTime')">${escapeHtml(c.actionTime || "—")}</td>
-        <td class="editable-cell text-sm font-semibold" onclick="editCorrCell(${cIdx}, 'verifiedBy')">${escapeHtml(c.verifiedBy || "Rajesh Sharma")}</td>
+        <td class="editable-cell text-sm font-semibold" onclick="editCorrCell(${cIdx}, 'verifiedBy')">${escapeHtml(c.verifiedBy || "BHIMLAL SHARMA")}</td>
         <td class="text-center">
           <button class="delete-btn-xs" onclick="deleteCorrRow(${cIdx})" title="Remove Observation">✕</button>
         </td>
@@ -421,7 +421,7 @@ window.cycleRowStatus = function(idx) {
         problem: `Dust or spillage noted during inspection at ${areaName}`,
         action: `Area re-cleaned using approved cleaning agent, sanitized and verified`,
         actionTime: activeRecord.rows[idx].time || "10:00 AM",
-        verifiedBy: "Rajesh Sharma"
+        verifiedBy: "BHIMLAL SHARMA"
       });
     }
   }
@@ -479,10 +479,10 @@ const QUICK_SUGGESTIONS = {
     "12:00 PM", "12:15 PM", "12:30 PM", "12:45 PM"
   ],
   cleanedBy: [
-    "Pratap", "Mahesh"
+    "SANVALDAS", "Mahesh"
   ],
   checkedBy: [
-    "Rajesh Sharma"
+    "BHIMLAL SHARMA"
   ]
 };
 
@@ -632,7 +632,7 @@ window.confirmAddObs = function() {
   }
   const action = document.getElementById('obs-action').value.trim() || "Area cleaned and sanitized";
   const time = document.getElementById('obs-time').value.trim() || "10:15 AM";
-  const verifier = document.getElementById('obs-verifier').value.trim() || "Rajesh Sharma";
+  const verifier = document.getElementById('obs-verifier').value.trim() || "BHIMLAL SHARMA";
 
   if (!activeRecord.corrective) activeRecord.corrective = [];
   activeRecord.corrective.push({
@@ -682,7 +682,7 @@ window.confirmAddArea = function() {
   const method = document.getElementById('new-area-method').value.trim() || "Sweeping & Wet Mopping";
   const agent = document.getElementById('new-area-agent').value.trim() || "Lizol Floor Cleaner";
   const time = document.getElementById('new-area-time').value.trim() || "10:30 AM";
-  const cleanedBy = document.getElementById('new-area-cleanedby').value.trim() || "Pratap";
+  const cleanedBy = document.getElementById('new-area-cleanedby').value.trim() || "SANVALDAS";
 
   const newId = activeRecord.rows.length + 1;
   activeRecord.rows.push({
@@ -693,7 +693,7 @@ window.confirmAddArea = function() {
     time: time,
     status: "OK",
     cleanedBy: cleanedBy,
-    checkedBy: "Rajesh Sharma"
+    checkedBy: "BHIMLAL SHARMA"
   });
 
   closeAddAreaPopup();
@@ -713,8 +713,8 @@ window.markUnsaved = function() {
 window.saveRegister = async function(isSilent = false) {
   if (!activeRecord) return;
 
-  activeRecord.performedBy = document.getElementById('sign-performed-by').value || "Pratap / Mahesh";
-  activeRecord.supervisor = document.getElementById('sign-supervisor').value || "Rajesh Sharma";
+  activeRecord.performedBy = document.getElementById('sign-performed-by').value || "SANVALDAS / Mahesh";
+  activeRecord.supervisor = document.getElementById('sign-supervisor').value || "BHIMLAL SHARMA";
   activeRecord.savedAt = Date.now();
 
   allRecordsCache[activeRecord.date] = activeRecord;
@@ -863,7 +863,7 @@ window.loadHistory = async function() {
         <div class="hc-date-badge">${dateStr.split('-')[2]}</div>
         <div>
           <div class="hc-date-title">${formatDateDisplay(dateStr)}</div>
-          <div class="hc-meta">Verified by: <strong>${escapeHtml(item.supervisor || "Rajesh Sharma")}</strong> • Shift: ${escapeHtml(item.shift || "General")}</div>
+          <div class="hc-meta">Verified by: <strong>${escapeHtml(item.supervisor || "BHIMLAL SHARMA")}</strong> • Shift: ${escapeHtml(item.shift || "General")}</div>
         </div>
       </div>
       <div class="hc-right">
@@ -1023,7 +1023,7 @@ window.exportReport = async function(type, meta = {}) {
       });
     }
 
-    sheetRows.push([`Cleaning Performed By: ${rec.performedBy || "Pratap / Mahesh"}`, "", `Verified By / Supervisor: ${rec.supervisor || "Rajesh Sharma"}`]);
+    sheetRows.push([`Cleaning Performed By: ${rec.performedBy || "SANVALDAS / Mahesh"}`, "", `Verified By / Supervisor: ${rec.supervisor || "BHIMLAL SHARMA"}`]);
     sheetRows.push([]); // separation
     sheetRows.push(["------------------------------------------------------------------------------------------------"]);
     sheetRows.push([]);
