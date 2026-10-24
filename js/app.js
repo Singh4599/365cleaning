@@ -1160,7 +1160,8 @@ window.printA4 = function() {
     return '—';
   }
 
-  const rowsHtml = activeRecord.rows.map((r,i) => `<tr style="${i%2===1?'background:#f7f7f7':''}">
+  const rowH = Math.max(8, Math.floor(148 / activeRecord.rows.length));
+  const rowsHtml = activeRecord.rows.map((r,i) => `<tr style="height:${rowH}mm;${i%2===1?'background:#f7f7f7':''}">
     <td style="text-align:center">${r.id||i+1}</td>
     <td><b>${esc(r.area)}</b></td>
     <td>${esc(r.method)}</td>
