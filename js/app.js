@@ -1140,3 +1140,58 @@ window.addEventListener('DOMContentLoaded', async () => {
   const initialDate = getTodayStr();
   await loadDayRecord(initialDate);
 });
+
+// ── PRINT A4 (popup window — captures rendered table) ──
+window.printA4 = function() {
+  const tbl = document.getElementById('table-cleaning');
+  if (!tbl) { alert('No table found.'); return; }
+  const dateEl = document.getElementById('header-date');
+  const unitEl = document.getElementById('header-unit-badge');
+  const dateStr = dateEl ? dateEl.textContent : currentDate;
+  const unitStr = unitEl ? unitEl.textContent : 'Unit 11';
+
+  const clone = tbl.cloneNode(true);
+  clone.querySelectorAll('button, .table-action-btn, .edit-cell-btn').forEach(el => el.remove());
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>LV Spices — Cleaning & Sanitation Register</title>
+<style>
+  @page{size:A4 landscape;margin:0}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{font-family:Arial,sans-serif;font-size:7.5pt;color:#000;background:#fff}
+  .wrap{width:270mm;margin:8mm auto}
+  .hdr{border:2pt solid #000;padding:6pt 8pt;margin-bottom:5pt}
+  .hdr h1{font-size:12pt;font-weight:800;text-transform:uppercase}
+  .hdr p{font-size:7pt;color:#444;margin-top:2pt}
+  .pills{display:flex;gap:5pt;margin-top:4pt;flex-wrap:wrap}
+  .pill{border:1pt solid #555;padding:1pt 5pt;font-size:6.5pt;border-radius:3pt}
+  .pill b{color:#B91C1C}
+  table{width:100%;border-collapse:collapse;table-layout:auto;margin-top:3pt}
+  thead{display:table-header-group}
+  tr{page-break-inside:avoid}
+  th{background:#1a1a1a!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:6.5pt;padding:4pt 3pt;border:0.75pt solid #000;white-space:nowrap}
+  td{font-size:7pt;padding:3pt;border:0.5pt solid #aaa;vertical-align:middle}
+  tr:nth-child(even) td{background:#fafafa}
+  .ok-pill,.status-ok{background:#d4edda!important;color:#155724!important;border:0.5pt solid #155724!important;padding:0 3pt;border-radius:2pt;font-size:6pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .nok-pill,.status-nok{background:#f8d7da!important;color:#721c24!important;border:0.5pt solid #721c24!important;padding:0 3pt;border-radius:2pt;font-size:6pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+</style></head><body>
+<div class="wrap">
+<div class="hdr">
+  <h1>Cleaning &amp; Sanitation Register — L V Spices</h1>
+  <p>FSSAI Schedule 4 GMP &amp; GHP • Daily Hygiene Checklist</p>
+  <div class="pills">
+    <span class="pill">📅 Date: <b>${dateStr}</b></span>
+    <span class="pill">🏭 Unit: <b>${unitStr}</b></span>
+    <span class="pill">⏰ Shift: <b>General Shift</b></span>
+    <span class="pill">🖨️ Printed: <b>${new Date().toLocaleDateString('en-IN')}</b></span>
+  </div>
+</div>
+${clone.outerHTML}
+</div>
+<script>window.onload=function(){window.print();setTimeout(function(){window.close();},800);};<\/script>
+</body></html>`;
+
+  const pw = window.open('','_blank','width=1123,height=794');
+  if(pw){pw.document.write(html);pw.document.close();}
+  else{alert('Allow popups to use Print A4.');}
+};
