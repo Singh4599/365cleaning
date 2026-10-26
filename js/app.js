@@ -1242,7 +1242,7 @@ window.openPrintModal = function() {
   const modal = document.getElementById('print-modal');
   if (!modal) return;
   // Show backdrop
-  modal.style.display = 'block';
+  modal.style.display = 'flex';
   _printTab = 'single';
   setPrintTab('single');
 
