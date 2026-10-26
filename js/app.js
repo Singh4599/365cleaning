@@ -1231,3 +1231,279 @@ window.printA4 = function() {
   if(pw){pw.document.write(html);pw.document.close();}
   else{alert('Allow popups to use Print A4.');}
 };
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PRINT RANGE MODAL
+// ══════════════════════════════════════════════════════════════════════════════
+
+let _printTab = 'single';
+
+window.openPrintModal = function() {
+  const modal = document.getElementById('print-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  _printTab = 'single';
+  setPrintTab('single');
+
+  // Pre-fill single date label
+  const dateEl = document.getElementById('header-date');
+  const label = document.getElementById('pm-single-date-label');
+  if (label) label.textContent = dateEl ? dateEl.textContent.trim() : currentDate;
+
+  // Pre-fill range from/to with current date
+  const from = document.getElementById('pm-from-date');
+  const to   = document.getElementById('pm-to-date');
+  if (from) from.value = currentDate;
+  if (to)   to.value   = currentDate;
+
+  // Pre-fill month select to current month/year
+  const mSel = document.getElementById('pm-month-sel');
+  const ySel = document.getElementById('pm-year-sel');
+  if (mSel && currentDate) mSel.value = currentDate.split('-')[1];
+  if (ySel && currentDate) {
+    const yr = currentDate.split('-')[0];
+    // Add year option if missing
+    if (![...ySel.options].some(o => o.value === yr)) {
+      const opt = document.createElement('option');
+      opt.value = yr; opt.textContent = yr;
+      ySel.appendChild(opt);
+    }
+    ySel.value = yr;
+  }
+
+  // Pre-fill unit from current badge
+  const unitBadge = document.getElementById('header-unit-badge');
+  const unitSel = document.getElementById('pm-unit-sel');
+  if (unitSel && unitBadge) {
+    const txt = unitBadge.textContent.trim();
+    [...unitSel.options].forEach(o => { if (o.value === txt) unitSel.value = txt; });
+  }
+
+  updateMonthPreview();
+  updateRangeInfo();
+};
+
+window.closePrintModal = function() {
+  const modal = document.getElementById('print-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.setPrintTab = function(tab) {
+  _printTab = tab;
+  ['single','range','month'].forEach(t => {
+    const btn   = document.getElementById('pm-tab-' + t);
+    const panel = document.getElementById('pm-panel-' + t);
+    const active = t === tab;
+    if (btn) {
+      btn.style.background    = active ? '#1a1a2e' : '#fff';
+      btn.style.color         = active ? '#fff'    : '#555';
+      btn.style.borderColor   = active ? '#1a1a2e' : '#e5e7eb';
+      btn.style.fontWeight    = active ? '700'     : '600';
+    }
+    if (panel) panel.style.display = active ? '' : 'none';
+  });
+};
+
+function updateRangeInfo() {
+  const info  = document.getElementById('pm-range-info');
+  const from  = document.getElementById('pm-from-date');
+  const to    = document.getElementById('pm-to-date');
+  if (!info || !from || !to) return;
+  if (from.value && to.value && from.value <= to.value) {
+    const days = dateDiffDays(from.value, to.value) + 1;
+    info.style.display = '';
+    info.textContent   = `📄 ${days} page${days > 1 ? 's' : ''} will be printed (one per day). ${days > 31 ? '⚠️ Large range — may take a moment.' : ''}`;
+  } else {
+    info.style.display = 'none';
+  }
+}
+
+window.updateMonthPreview = function() {
+  const mSel = document.getElementById('pm-month-sel');
+  const ySel = document.getElementById('pm-year-sel');
+  const info = document.getElementById('pm-month-info');
+  if (!mSel || !ySel || !info) return;
+  const m = mSel.value;
+  const y = ySel.value;
+  const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  info.textContent = `📅 ${monthNames[parseInt(m)-1]} ${y} — ${daysInMonth} days — ${daysInMonth} pages will be printed.`;
+};
+
+// Add change listeners for range inputs
+document.addEventListener('DOMContentLoaded', function() {
+  const from = document.getElementById('pm-from-date');
+  const to   = document.getElementById('pm-to-date');
+  if (from) from.addEventListener('change', updateRangeInfo);
+  if (to)   to.addEventListener('change', updateRangeInfo);
+});
+
+function dateDiffDays(from, to) {
+  return Math.round((new Date(to) - new Date(from)) / 86400000);
+}
+
+function getDatesInRange(from, to) {
+  const dates = [];
+  let cur = new Date(from);
+  const end = new Date(to);
+  while (cur <= end) {
+    dates.push(cur.toISOString().split('T')[0]);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return dates;
+}
+
+window.executePrint = function() {
+  const unitSel = document.getElementById('pm-unit-sel');
+  const unitStr = unitSel ? unitSel.value : 'Unit 11';
+
+  if (_printTab === 'single') {
+    // Print current active date (original behaviour)
+    closePrintModal();
+    printA4();
+    return;
+  }
+
+  let dates = [];
+
+  if (_printTab === 'range') {
+    const from = document.getElementById('pm-from-date');
+    const to   = document.getElementById('pm-to-date');
+    if (!from.value || !to.value) { alert('Please select both From and To dates.'); return; }
+    if (from.value > to.value) { alert('From date must be before or equal to To date.'); return; }
+    const days = dateDiffDays(from.value, to.value) + 1;
+    if (days > 62) { if (!confirm(`You are about to print ${days} pages. Continue?`)) return; }
+    dates = getDatesInRange(from.value, to.value);
+  }
+
+  if (_printTab === 'month') {
+    const mSel = document.getElementById('pm-month-sel');
+    const ySel = document.getElementById('pm-year-sel');
+    const m = mSel.value.padStart(2,'0');
+    const y = ySel.value;
+    const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
+    dates = Array.from({length: daysInMonth}, (_,i) => {
+      const d = String(i+1).padStart(2,'0');
+      return `${y}-${m}-${d}`;
+    });
+  }
+
+  if (!dates.length) return;
+  closePrintModal();
+  printA4Range(dates, unitStr);
+};
+
+window.printA4Range = function(dates, unitStr) {
+  function esc(s){ return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—'; }
+  function badge(v){
+    if(v==='OK')     return '<span style="background:#16a34a;color:#fff;padding:1pt 5pt;border-radius:3pt;font-size:6.5pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">✔ OK</span>';
+    if(v==='Not OK') return '<span style="background:#dc2626;color:#fff;padding:1pt 5pt;border-radius:3pt;font-size:6.5pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">✖ NOT OK</span>';
+    if(v==='NA')     return '<span style="background:#f59e0b;color:#fff;padding:1pt 5pt;border-radius:3pt;font-size:6.5pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">— NA</span>';
+    return '—';
+  }
+
+  function formatDate(ds) {
+    const [y,m,d] = ds.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  const pagesHtml = dates.map((ds, idx) => {
+    const rec = allRecordsCache[ds] || createDefaultRecord(ds);
+    const rows = rec.rows || [];
+    const [y,m,d] = ds.split('-');
+    const monthName = monthNames[parseInt(m)-1] || '';
+    const dateStr = formatDate(ds);
+
+    const okCount = rows.filter(r => r.status === 'OK').length;
+    const notOkCount = rows.filter(r => r.status === 'Not OK').length;
+    const naCount = rows.filter(r => r.status === 'NA').length;
+    const score = rows.length ? Math.round(okCount / rows.length * 100) : 0;
+
+    const rowH = Math.max(7, Math.floor(140 / Math.max(rows.length, 1)));
+    const rowsHtml = rows.length > 0 ? rows.map((r,i) => `<tr style="height:${rowH}mm;${i%2===1?'background:#f7f7f7':''}">
+      <td style="text-align:center">${r.id||i+1}</td>
+      <td><b>${esc(r.area)}</b></td>
+      <td>${esc(r.method)}</td>
+      <td>${esc(r.agent)}</td>
+      <td style="text-align:center">${esc(r.time)}</td>
+      <td style="text-align:center">${badge(r.status)}</td>
+      <td>${esc(r.cleanedBy)}</td>
+      <td>${esc(r.checkedBy)}</td>
+    </tr>`).join('') :
+    `<tr><td colspan="8" style="text-align:center;color:#999;padding:20pt;font-style:italic;">No record saved for this date</td></tr>`;
+
+    const pageBreak = idx < dates.length - 1 ? 'page-break-after:always;' : '';
+
+    return `<div style="${pageBreak}">
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:16pt;">
+    <div style="flex:1">
+      <h1>Cleaning &amp; Sanitation Register — L V Spices</h1>
+      <p>FSSAI Schedule 4 GMP &amp; GHP • Daily Hygiene Checklist</p>
+      <div class="pills">
+        <span class="pill">📅 Date: <b>${dateStr}</b></span>
+        <span class="pill">📆 Month: <b>${monthName}</b></span>
+        <span class="pill">🏭 Unit: <b>${unitStr}</b></span>
+        <span class="pill">⏰ Shift: <b>General Shift</b></span>
+        <span class="pill">✅ OK: <b>${okCount}</b></span>
+        <span class="pill">❌ Not OK: <b>${notOkCount}</b></span>
+        <span class="pill">📊 Score: <b>${score}%</b></span>
+      </div>
+    </div>
+    <div style="text-align:right;font-size:7pt;color:#444">
+      <div>Page ${idx+1} of ${dates.length}</div>
+      <div>Printed: ${new Date().toLocaleDateString('en-IN')}</div>
+    </div>
+  </div>
+</div>
+<table>
+  <thead><tr>
+    <th style="width:4%">SR.</th>
+    <th style="width:22%">AREA / EQUIPMENT CLEANED</th>
+    <th style="width:18%">CLEANING METHOD</th>
+    <th style="width:18%">CLEANING / SANITIZING AGENT USED</th>
+    <th style="width:8%">TIME</th>
+    <th style="width:8%">STATUS</th>
+    <th style="width:11%">CLEANED BY (SIGN)</th>
+    <th style="width:11%">CHECKED BY (SIGN)</th>
+  </tr></thead>
+  <tbody>${rowsHtml}</tbody>
+</table>
+<div class="sig">
+  <span><b>Performed By:</b> &nbsp; ${esc(rec.performedBy||'Sanvaldas / Mahesh')}</span>
+  <span><b>Supervisor:</b> &nbsp; Bhimlal Sharma</span>
+  <span><b>Date:</b> ${dateStr}</span>
+</div>
+</div>`;
+  }).join('\n');
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>LV Spices — Cleaning Register Print (${dates.length} pages)</title>
+<style>
+  @page{size:A4 landscape;margin:8mm}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{font-family:Arial,sans-serif;font-size:8pt;color:#000;background:#fff}
+  .hdr{border:2pt solid #000;padding:6pt 8pt;margin-bottom:6pt}
+  .hdr h1{font-size:12pt;font-weight:800;text-transform:uppercase}
+  .hdr p{font-size:7pt;color:#444;margin-top:2pt}
+  .pills{display:flex;gap:5pt;margin-top:5pt;flex-wrap:wrap}
+  .pill{border:1pt solid #555;padding:1pt 6pt;font-size:7pt;border-radius:3pt}
+  .pill b{color:#B91C1C}
+  table{width:100%;border-collapse:collapse;margin-top:5pt}
+  thead{display:table-header-group}
+  tr{page-break-inside:avoid}
+  th{background:#1a1a1a;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:7pt;padding:5pt 4pt;border:0.75pt solid #000;white-space:nowrap;text-align:left}
+  td{font-size:8pt;padding:5pt 4pt;border:0.5pt solid #bbb;vertical-align:middle}
+  .sig{margin-top:12pt;font-size:8.5pt;display:flex;justify-content:space-between}
+</style></head><body>
+${pagesHtml}
+<script>window.onload=function(){window.print();setTimeout(function(){window.close();},1200);};<\/script>
+</body></html>`;
+
+  const pw = window.open('','_blank','width=1200,height=850');
+  if (pw) { pw.document.write(html); pw.document.close(); }
+  else    { alert('Allow popups to use Print A4.'); }
+};
+

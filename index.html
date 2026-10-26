@@ -92,11 +92,98 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h8"/><path d="M8 17h8"/><polyline points="10 9 9 9 8 9"/></svg>
           Export Excel (.xlsx)
         </button>
-        <!-- Print A4 -->
-        <button class="btn btn-export-excel" onclick="printA4()" style="background:#1a1a2e; color:#fff; border-color:#1a1a2e;">
+        <!-- Print A4 (opens range picker modal) -->
+        <button class="btn btn-export-excel" onclick="openPrintModal()" style="background:#1a1a2e; color:#fff; border-color:#1a1a2e;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print A4
         </button>
+
+        <!-- ═══ PRINT RANGE MODAL ═══ -->
+        <div id="print-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(3px)">
+          <div style="background:#fff;border-radius:16px;padding:28px 32px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.25);font-family:Arial,sans-serif;">
+            <!-- Header -->
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+              <div style="width:40px;height:40px;background:#1a1a2e;border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="20" height="20"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              </div>
+              <div>
+                <div style="font-size:16px;font-weight:800;color:#111;">Print A4 — Select Date Range</div>
+                <div style="font-size:12px;color:#666;margin-top:2px;">Print one page per day for selected period</div>
+              </div>
+              <button onclick="closePrintModal()" style="margin-left:auto;background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:4px;">✕</button>
+            </div>
+
+            <!-- Mode Tabs -->
+            <div style="display:flex;gap:8px;margin-bottom:20px;">
+              <button id="pm-tab-single" onclick="setPrintTab('single')" style="flex:1;padding:8px;border-radius:8px;border:2px solid #1a1a2e;background:#1a1a2e;color:#fff;font-weight:700;font-size:13px;cursor:pointer;">Today's Date</button>
+              <button id="pm-tab-range" onclick="setPrintTab('range')" style="flex:1;padding:8px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#555;font-weight:600;font-size:13px;cursor:pointer;">Date Range</button>
+              <button id="pm-tab-month" onclick="setPrintTab('month')" style="flex:1;padding:8px;border-radius:8px;border:2px solid #e5e7eb;background:#fff;color:#555;font-weight:600;font-size:13px;cursor:pointer;">Full Month</button>
+            </div>
+
+            <!-- Single Day -->
+            <div id="pm-panel-single">
+              <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:14px;font-size:13px;color:#444;">
+                <div style="font-weight:700;color:#111;margin-bottom:4px;">Selected Date</div>
+                <div id="pm-single-date-label" style="font-size:15px;font-weight:800;color:#1a1a2e;">—</div>
+              </div>
+            </div>
+
+            <!-- Date Range -->
+            <div id="pm-panel-range" style="display:none;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">From Date</label>
+                  <input type="date" id="pm-from-date" style="width:100%;height:36px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;"/>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">To Date</label>
+                  <input type="date" id="pm-to-date" style="width:100%;height:36px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;"/>
+                </div>
+              </div>
+              <div id="pm-range-info" style="margin-top:10px;font-size:12px;color:#666;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 12px;display:none;"></div>
+            </div>
+
+            <!-- Full Month -->
+            <div id="pm-panel-month" style="display:none;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Month</label>
+                  <select id="pm-month-sel" onchange="updateMonthPreview()" style="width:100%;height:36px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;">
+                    <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+                    <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+                    <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+                    <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Year</label>
+                  <select id="pm-year-sel" onchange="updateMonthPreview()" style="width:100%;height:36px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;">
+                    <option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option>
+                  </select>
+                </div>
+              </div>
+              <div id="pm-month-info" style="margin-top:10px;font-size:12px;color:#666;background:#f0fdf4;border:1px solid #a7f3d0;border-radius:8px;padding:8px 12px;"></div>
+            </div>
+
+            <!-- Unit selector -->
+            <div style="margin-top:16px;">
+              <label style="font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;">Unit</label>
+              <select id="pm-unit-sel" style="width:100%;height:36px;padding:0 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;outline:none;">
+                <option value="Unit 11">Unit 11</option>
+                <option value="Unit 12">Unit 12</option>
+              </select>
+            </div>
+
+            <!-- Footer buttons -->
+            <div style="display:flex;gap:10px;margin-top:22px;">
+              <button onclick="closePrintModal()" style="flex:1;height:40px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;color:#555;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
+              <button onclick="executePrint()" style="flex:2;height:40px;border:none;border-radius:10px;background:#1a1a2e;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print Now
+              </button>
+            </div>
+          </div>
+        </div>
         <button class="btn btn-save-cloud" onclick="saveRegister()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><polyline points="12 12 12 8"/><polyline points="10 10 12 8 14 10"/></svg>
           Save to Cloud
