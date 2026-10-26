@@ -1241,10 +1241,8 @@ let _printTab = 'single';
 window.openPrintModal = function() {
   const modal = document.getElementById('print-modal');
   if (!modal) return;
-  // Show as flex with centering
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
+  // Show backdrop
+  modal.style.display = 'block';
   _printTab = 'single';
   setPrintTab('single');
 
