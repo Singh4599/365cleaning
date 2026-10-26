@@ -1203,7 +1203,6 @@ window.printA4 = function() {
     <span class="pill">⏰ Shift: <b>General Shift</b></span>
     <span class="pill">✅ OK: <b>${okCount}/${activeRecord.rows.length}</b></span>
     <span class="pill">📊 Score: <b>${score}%</b></span>
-    <span class="pill">🖨️ Printed: <b>${new Date().toLocaleDateString('en-IN')}</b></span>
   </div>
 </div>
 <table>
@@ -1497,7 +1496,6 @@ window.printA4Range = function(dates, unitStr) {
     </div>
     <div style="text-align:right;font-size:7pt;color:#444">
       <div>Page ${idx+1} of ${dates.length}</div>
-      <div>Printed: ${new Date().toLocaleDateString('en-IN')}</div>
     </div>
   </div>
 </div>
