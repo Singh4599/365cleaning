@@ -1241,20 +1241,26 @@ let _printTab = 'single';
 window.openPrintModal = function() {
   const modal = document.getElementById('print-modal');
   if (!modal) return;
+  // Show as flex with centering
   modal.style.display = 'flex';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
   _printTab = 'single';
   setPrintTab('single');
+
+  // Today's real date for max restrictions
+  const today = getTodayStr(); // YYYY-MM-DD
 
   // Pre-fill single date label
   const dateEl = document.getElementById('header-date');
   const label = document.getElementById('pm-single-date-label');
   if (label) label.textContent = dateEl ? dateEl.textContent.trim() : currentDate;
 
-  // Pre-fill range from/to with current date
+  // Pre-fill range from/to — restrict max to today
   const from = document.getElementById('pm-from-date');
   const to   = document.getElementById('pm-to-date');
-  if (from) from.value = currentDate;
-  if (to)   to.value   = currentDate;
+  if (from) { from.value = currentDate; from.max = today; }
+  if (to)   { to.value   = currentDate; to.max   = today; }
 
   // Pre-fill month select to current month/year
   const mSel = document.getElementById('pm-month-sel');
@@ -1262,13 +1268,15 @@ window.openPrintModal = function() {
   if (mSel && currentDate) mSel.value = currentDate.split('-')[1];
   if (ySel && currentDate) {
     const yr = currentDate.split('-')[0];
-    // Add year option if missing
     if (![...ySel.options].some(o => o.value === yr)) {
       const opt = document.createElement('option');
       opt.value = yr; opt.textContent = yr;
       ySel.appendChild(opt);
     }
     ySel.value = yr;
+    // Remove future years from dropdown
+    const curYr = parseInt(today.split('-')[0]);
+    [...ySel.options].forEach(o => { if (parseInt(o.value) > curYr) o.disabled = true; });
   }
 
   // Pre-fill unit from current badge
