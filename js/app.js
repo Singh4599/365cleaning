@@ -1315,10 +1315,19 @@ function updateRangeInfo() {
   const from  = document.getElementById('pm-from-date');
   const to    = document.getElementById('pm-to-date');
   if (!info || !from || !to) return;
+  const today = getTodayStr();
+  // Cap 'to' to today if future selected
+  if (to.value > today) { to.value = today; }
+  if (from.value > today) { from.value = today; }
   if (from.value && to.value && from.value <= to.value) {
     const days = dateDiffDays(from.value, to.value) + 1;
     info.style.display = '';
     info.textContent   = `📄 ${days} page${days > 1 ? 's' : ''} will be printed (one per day). ${days > 31 ? '⚠️ Large range — may take a moment.' : ''}`;
+    info.style.color = '#374151';
+  } else if (from.value && to.value && from.value > to.value) {
+    info.style.display = '';
+    info.textContent = '⚠️ "From" date must be before "To" date.';
+    info.style.color = '#dc2626';
   } else {
     info.style.display = 'none';
   }
@@ -1331,9 +1340,27 @@ window.updateMonthPreview = function() {
   if (!mSel || !ySel || !info) return;
   const m = mSel.value;
   const y = ySel.value;
-  const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
+  const today = getTodayStr();
+  const [todayY, todayM] = today.split('-');
   const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  info.textContent = `📅 ${monthNames[parseInt(m)-1]} ${y} — ${daysInMonth} days — ${daysInMonth} pages will be printed.`;
+  // Check if selected month/year is in the future
+  if (y > todayY || (y === todayY && m > todayM)) {
+    info.style.background = '#fef2f2';
+    info.style.borderColor = '#fecaca';
+    info.style.color = '#dc2626';
+    info.textContent = `⛔ ${monthNames[parseInt(m)-1]} ${y} is a future month — printing not allowed.`;
+    return;
+  }
+  // If current month, only print days up to today
+  let daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
+  let printableDays = daysInMonth;
+  if (y === todayY && m === todayM) {
+    printableDays = parseInt(today.split('-')[2]);
+  }
+  info.style.background = '#f0fdf4';
+  info.style.borderColor = '#a7f3d0';
+  info.style.color = '#374151';
+  info.textContent = `📅 ${monthNames[parseInt(m)-1]} ${y} — ${printableDays} days — ${printableDays} pages will be printed.${ printableDays < daysInMonth ? ` (up to today's date)` : '' }`;
 };
 
 // Add change listeners for range inputs
@@ -1362,9 +1389,9 @@ function getDatesInRange(from, to) {
 window.executePrint = function() {
   const unitSel = document.getElementById('pm-unit-sel');
   const unitStr = unitSel ? unitSel.value : 'Unit 11';
+  const today = getTodayStr();
 
   if (_printTab === 'single') {
-    // Print current active date (original behaviour)
     closePrintModal();
     printA4();
     return;
@@ -1376,7 +1403,9 @@ window.executePrint = function() {
     const from = document.getElementById('pm-from-date');
     const to   = document.getElementById('pm-to-date');
     if (!from.value || !to.value) { alert('Please select both From and To dates.'); return; }
-    if (from.value > to.value) { alert('From date must be before or equal to To date.'); return; }
+    if (from.value > to.value)   { alert('From date must be before or equal to To date.'); return; }
+    if (from.value > today)      { alert('From date cannot be a future date.'); return; }
+    if (to.value > today)        { alert('To date cannot be a future date.'); return; }
     const days = dateDiffDays(from.value, to.value) + 1;
     if (days > 62) { if (!confirm(`You are about to print ${days} pages. Continue?`)) return; }
     dates = getDatesInRange(from.value, to.value);
@@ -1387,9 +1416,17 @@ window.executePrint = function() {
     const ySel = document.getElementById('pm-year-sel');
     const m = mSel.value.padStart(2,'0');
     const y = ySel.value;
+    const [todayY, todayM, todayD] = today.split('-');
+    // Block future month
+    if (y > todayY || (y === todayY && m > todayM)) {
+      alert(`${m}/${y} is a future month. Printing not allowed.`);
+      return;
+    }
     const daysInMonth = new Date(parseInt(y), parseInt(m), 0).getDate();
-    dates = Array.from({length: daysInMonth}, (_,i) => {
-      const d = String(i+1).padStart(2,'0');
+    // If current month, only print up to today
+    const lastDay = (y === todayY && m === todayM) ? parseInt(todayD) : daysInMonth;
+    dates = Array.from({length: lastDay}, (_, i) => {
+      const d = String(i + 1).padStart(2, '0');
       return `${y}-${m}-${d}`;
     });
   }
